@@ -318,12 +318,13 @@ python3 gt7_2r.py ./spa_session_20250113
 
 ## Version History
 
-**v8.5.3a-lite-hybrid** (Current)
-- Aero frequency adders reduced 75% (GT7 calibration)
-- Power platform control separated from aero
-- GT7 Downforce Database added
-- Ride height priority reordered (CG/geometry focus)
-- Improved constraint compensation system
+**v8.5.3b** (Current)
+- Complete YAML protocol alignment (Phases A, B, C, D)
+- Integrated GT7 Downforce Database, Differential Baselines, Performance Expectations
+- Session folder management (--auto-session, -s flags)
+- Intelligent performance gain estimation
+- Multi-format telemetry support
+- Track-type optimization (high_speed/technical/balanced)
 
 ## Contributing
 
