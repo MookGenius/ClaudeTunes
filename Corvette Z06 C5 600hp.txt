@@ -1,0 +1,52 @@
+CAR NAME
+2001 Corvette Z06 Custom (C5)     
+
+DRIVETRAIN
+FR
+
+POWER OUTPUT AND WEIGHT
+584 hp 440 ft-lbs 3106 lbs weight, 50:50 f:r balance
+
+ROTATIONAL G @ 40/75/150 MPH
+1.17/1.23/1.36
+
+TIRE COMPOUND
+Sports Medium Tires
+
+SUSPENSION SETUP Front/Rear
+BODY HEIGHT ADJUSTMENT
+80/85 mm
+(range: front: 55-155mm rear: 60-165mm)
+
+ARB
+4/4 (range: 1-10)
+
+DC
+25/25 (range: 20-40%)
+
+DE
+45/45 (range: 30-50%)
+
+NATURAL FREQUENCY 2.10 hz/2.30 hz
+(range: front: 1.60-3.50 hz rear: 1.80-3.70 hz)
+
+CAMBER ANGLE
+-3.0/-3.0 (range: 0.0 to -6.0°)
+
+TOE ANGLE
+0.00 | 0.20 in
+(range: front and rear 1.00 out to 1.00 in)
+
+DIFFERENTIAL GEAR SETTINGS
+Rear: 10/30/20 (range: 5 to 60 for all values)
+
+TORQUE SPLIT F:R
+0:100
+
+AERODYNAMICS
+Downforce:
+front) current-70 (range: min-70 max 120)
+rear) current-190 (range: min-140 max 290)
+
+STABILITY
+-0.26/-1.00 Low/High

@@ -1,0 +1,52 @@
+CAR NAME
+2013 Ferrari LaFerrari
+
+DRIVETRAIN
+MR
+
+POWER OUTPUT AND WEIGHT
+1043 hp 543 ft-lbs 2767 lbs weight, 41:59 f:r balance
+
+TIRE COMPOUND
+Racing Hard Tires
+
+CENTER OF GRAVITY HEIGHT
+420 mm
+
+SUSPENSION SETUP Front/Rear
+BODY HEIGHT ADJUSTMENT
+xx/xx mm
+(range: front: 85-140mm rear: 110-165mm)
+
+ARB
+x/x (range: 1-10)
+
+DC
+xx/xx (range: 20-40%)
+
+DE
+xx/xx (range: 30-50%)
+
+NATURAL FREQUENCY x.xx hz/x.xx hz
+(range: front: 2.50-3.40 hz rear: 2.60-3.50 hz)
+
+CAMBER ANGLE
+x.x/x.x (range: 0.0 to -6.0°)
+
+TOE ANGLE
+x.xx | x.xx
+(range: front and rear 1.00 out to 1.00 in)
+
+DIFFERENTIAL GEAR SETTINGS
+Rear: xx/xx/xx (range: 5 to 60 for all values)
+
+TORQUE SPLIT F:R
+0:100
+
+AERODYNAMICS
+Downforce:
+front) current-xxx (range: min-250 max 350)
+rear) current-xxx (range: min-450 max 600)
+
+STABILITY
+-0.49/-1.00 Low/High

@@ -1,0 +1,37 @@
+═══════════════════════════════════════════════════════
+   CLAUDETUNES GT7 SETUP SHEET - 2001 Corvette Z06 Custom (C5)
+═══════════════════════════════════════════════════════
+TRACK: [Track Name]         VERSION: v1.0
+DATE: 2025-11-13                BASELINE: ClaudeTunes Auto
+
+─────────────────────────── Tires ────────────────────────────
+Front    (33)  Sports Medium Tires
+Rear     (33)  Sports Medium Tires
+
+─────────────────────────── Suspension ───────────────────────
+Suspension              Fully Customized Suspension
+                                Front         Rear
+Body Height Adjustment      mm       65           75
+Anti-Roll Bar              Lv.        7            6
+Damping Ratio (Compression) %        28           28
+Damping Ratio (Expansion)   %        38           38
+Natural Frequency          Hz      2.70        2.40
+Negative Camber Angle       °       -2.0          -1.5
+Toe Angle                   °     ▼ 0.00      ▲ 0.10
+
+─────────────────────────── Differential Gear ────────────────
+Differential            Fully Customized
+                                Front         Rear
+Initial Torque             Lv.        -           12
+Acceleration Sensitivity   Lv.        -           33
+Braking Sensitivity        Lv.        -           29
+Torque-Vectoring Center Differential         None
+Front/Rear Torque Distribution              TORQUE SPLIT F:R
+
+─────────────────────────── Aerodynamics ─────────────────────
+                                Front         Rear
+Downforce                  Lv.       95          215
+
+═══════════════════════════════════════════════════════════════
+PHYSICS: FR 584HP Natural Frequency | Stability: -0.11 | Gain: 0.5-2.0s
+═══════════════════════════════════════════════════════════════

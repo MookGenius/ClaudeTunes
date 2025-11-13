@@ -1,0 +1,53 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+venv/
+ENV/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Session outputs (keep structure, ignore content for now)
+sessions/*/
+*.txt
+!car_data_template_v2.txt
+!car_data_with_ranges_MASTER.txt
+!test_all_features.sh
+!README.md
+!ENHANCEMENTS.md
+
+# Telemetry CSVs from gt7_1r.py
+*.csv
+
+# Testing outputs
+test_*.txt
+corvette_*.txt

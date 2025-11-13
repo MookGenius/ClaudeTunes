@@ -1,0 +1,46 @@
+{
+  "session_info": {
+    "car": "2013 Ferrari LaFerrari",
+    "track": "Spa-Francorchamps",
+    "date": "2025-11-13",
+    "laps_analyzed": 5
+  },
+  "suspension_travel": {
+    "FL": [0.32, 0.35, 0.38, 0.33, 0.36, 0.34, 0.37, 0.35, 0.33, 0.36],
+    "FR": [0.31, 0.34, 0.37, 0.32, 0.35, 0.33, 0.36, 0.34, 0.32, 0.35],
+    "RL": [0.28, 0.30, 0.32, 0.29, 0.31, 0.30, 0.31, 0.29, 0.28, 0.30],
+    "RR": [0.27, 0.29, 0.31, 0.28, 0.30, 0.29, 0.30, 0.28, 0.27, 0.29]
+  },
+  "balance": {
+    "understeer_gradient": 1.8,
+    "classification": "Neutral",
+    "notes": "Good balance through high-speed corners, slight push in tight hairpins"
+  },
+  "tire_temps": {
+    "FL_I": 85.2,
+    "FL_M": 87.5,
+    "FL_O": 89.8,
+    "FR_I": 84.8,
+    "FR_M": 87.2,
+    "FR_O": 90.2,
+    "RL_I": 82.5,
+    "RL_M": 84.0,
+    "RL_O": 85.8,
+    "RR_I": 82.2,
+    "RR_M": 83.8,
+    "RR_O": 85.5
+  },
+  "performance_metrics": {
+    "lap_consistency": 87.5,
+    "avg_lap_time": "2:18.450",
+    "best_lap": "2:17.823",
+    "tire_degradation": "Low",
+    "slip_incidents": 3
+  },
+  "bottoming_detected": false,
+  "recommendations": [
+    "Front suspension slightly soft - consider +0.2Hz",
+    "Tire temps balanced - current camber working well",
+    "Minor understeer in slow corners - can reduce front ARB by 1 level"
+  ]
+}
