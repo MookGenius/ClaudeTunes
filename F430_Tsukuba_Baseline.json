@@ -1,0 +1,2856 @@
+{
+  "car_info": {
+    "car_name": "430 Scuderia '07",
+    "car_type": "street",
+    "car_type_description": "Street Car - Production vehicles",
+    "thresholds_used": {
+      "braking_threshold": 15,
+      "cornering_speed_min": 25,
+      "acceleration_threshold": 40,
+      "high_speed_threshold": 80,
+      "slip_traction_loss": 1.15,
+      "description": "Street Car - Production vehicles"
+    }
+  },
+  "session_info": {
+    "total_laps": 10,
+    "processed_at": "2025-11-12T23:00:30.800413",
+    "avg_lap_time": 63.61809789999999,
+    "fastest_lap": 59.826044,
+    "slowest_lap": 93.270072,
+    "avg_max_speed": 205.79583114624023,
+    "avg_max_rpm": 8684.8
+  },
+  "units_reference": {
+    "speed": "kph (kilometers per hour)",
+    "temperature": "Celsius (assumed from GT7 output)",
+    "suspension": "meters (compression distance)",
+    "body_height": "millimeters (ride height)",
+    "rpm": "revolutions per minute",
+    "slip_ratio": "dimensionless (tire_speed / car_speed)",
+    "angles": "radians for rotation, degrees for banking",
+    "time": "seconds"
+  },
+  "consistency_analysis": {
+    "lap_time_consistency": {
+      "std_deviation": 9.890838605228309,
+      "coefficient_of_variation": 15.547208941668641,
+      "best_lap": 59.826044,
+      "worst_lap": 93.270072,
+      "delta": 33.444027999999996
+    },
+    "speed_consistency": {
+      "max_speed_std": 2.2329499911842547,
+      "max_speed_range": 6.641249084472662
+    },
+    "braking_consistency": {
+      "speed_std": 1.564427690832959,
+      "note": "Lower std = more consistent braking points"
+    },
+    "apex_speed_consistency": {
+      "std_deviation": 1.6407274685511066,
+      "coefficient_of_variation": 1.6173637355256385,
+      "note": "Lower std = more consistent corner entry/apex speeds"
+    },
+    "overall_consistency_score": {
+      "overall_score": 46.42,
+      "lap_time_score": 0.0,
+      "apex_score": 91.91,
+      "braking_score": 94.21,
+      "interpretation": "Poor - Significant variations"
+    }
+  },
+  "tire_degradation": {
+    "temperature_trends": {
+      "fl": {
+        "start_temp": 62.43,
+        "end_temp": 73.34,
+        "total_change": 10.91,
+        "rate_per_lap": 1.091
+      },
+      "fr": {
+        "start_temp": 60.41,
+        "end_temp": 66.54,
+        "total_change": 6.14,
+        "rate_per_lap": 0.6135
+      },
+      "rl": {
+        "start_temp": 62.5,
+        "end_temp": 69.69,
+        "total_change": 7.19,
+        "rate_per_lap": 0.719
+      },
+      "rr": {
+        "start_temp": 60.81,
+        "end_temp": 65.31,
+        "total_change": 4.5,
+        "rate_per_lap": 0.4501
+      }
+    },
+    "slip_trends": {
+      "fl": {
+        "start_slip": 0.9862,
+        "end_slip": 0.9836,
+        "total_change": -0.0026,
+        "rate_per_lap": -0.000255
+      },
+      "fr": {
+        "start_slip": 0.9772,
+        "end_slip": 0.9753,
+        "total_change": -0.0019,
+        "rate_per_lap": -0.000188
+      },
+      "rl": {
+        "start_slip": 1.0226,
+        "end_slip": 1.023,
+        "total_change": 0.0004,
+        "rate_per_lap": 3.8e-05
+      },
+      "rr": {
+        "start_slip": 1.0206,
+        "end_slip": 1.0213,
+        "total_change": 0.0007,
+        "rate_per_lap": 6.7e-05
+      }
+    },
+    "degradation_rate": {
+      "fl": 0.3452,
+      "fr": 0.1972,
+      "rl": 0.2183,
+      "rr": 0.1397
+    },
+    "stint_summary": {
+      "average_degradation_rate": 0.2251,
+      "most_degraded_tire": "fl",
+      "least_degraded_tire": "rr",
+      "interpretation": "Minimal degradation - tires very stable",
+      "lap_time_delta": -0.449,
+      "time_lost_per_lap": -0.045
+    }
+  },
+  "tire_slip_analysis": {
+    "overall_slip_characteristics": {
+      "fl": {
+        "avg_slip": 0.986,
+        "max_slip": 0.9947,
+        "slip_variance": 0.0031
+      },
+      "fr": {
+        "avg_slip": 0.9775,
+        "max_slip": 0.9905,
+        "slip_variance": 0.0045
+      },
+      "rl": {
+        "avg_slip": 1.0326,
+        "max_slip": 1.1163,
+        "slip_variance": 0.0279
+      },
+      "rr": {
+        "avg_slip": 1.031,
+        "max_slip": 1.1186,
+        "slip_variance": 0.0293
+      }
+    },
+    "traction_loss_incidents": {
+      "lap_2": [
+        {
+          "tire": "RL",
+          "max_slip_ratio": 1.369,
+          "severity": "High"
+        },
+        {
+          "tire": "RR",
+          "max_slip_ratio": 1.369,
+          "severity": "High"
+        }
+      ],
+      "lap_4": [
+        {
+          "tire": "FL",
+          "max_slip_ratio": 1.857,
+          "severity": "High"
+        },
+        {
+          "tire": "FR",
+          "max_slip_ratio": 1.322,
+          "severity": "High"
+        },
+        {
+          "tire": "RL",
+          "max_slip_ratio": 4.983,
+          "severity": "High"
+        },
+        {
+          "tire": "RR",
+          "max_slip_ratio": 4.983,
+          "severity": "High"
+        }
+      ],
+      "lap_5": [
+        {
+          "tire": "RL",
+          "max_slip_ratio": 1.208,
+          "severity": "Moderate"
+        },
+        {
+          "tire": "RR",
+          "max_slip_ratio": 1.208,
+          "severity": "Moderate"
+        }
+      ],
+      "lap_6": [
+        {
+          "tire": "RL",
+          "max_slip_ratio": 1.167,
+          "severity": "Moderate"
+        },
+        {
+          "tire": "RR",
+          "max_slip_ratio": 1.167,
+          "severity": "Moderate"
+        }
+      ],
+      "lap_7": [
+        {
+          "tire": "RL",
+          "max_slip_ratio": 1.209,
+          "severity": "Moderate"
+        },
+        {
+          "tire": "RR",
+          "max_slip_ratio": 1.209,
+          "severity": "Moderate"
+        }
+      ],
+      "lap_9": [
+        {
+          "tire": "RL",
+          "max_slip_ratio": 1.174,
+          "severity": "Moderate"
+        },
+        {
+          "tire": "RR",
+          "max_slip_ratio": 1.174,
+          "severity": "Moderate"
+        }
+      ],
+      "lap_10": [
+        {
+          "tire": "RL",
+          "max_slip_ratio": 1.255,
+          "severity": "High"
+        },
+        {
+          "tire": "RR",
+          "max_slip_ratio": 1.255,
+          "severity": "High"
+        }
+      ]
+    },
+    "balance_analysis": {
+      "front_avg_slip": 0.9818,
+      "rear_avg_slip": 1.0318,
+      "balance_metric": -0.0501,
+      "tendency": "Understeer tendency - Rear tires losing grip more than front"
+    },
+    "recommendations": [
+      "BALANCED: Good slip distribution front-to-rear"
+    ],
+    "phase_slip_analysis": {
+      "braking": {
+        "front_avg_slip": 0.8943,
+        "rear_avg_slip": 0.9487,
+        "balance": -0.0544
+      },
+      "cornering": {
+        "front_avg_slip": 0.9825,
+        "rear_avg_slip": 1.0213,
+        "balance": -0.0389
+      },
+      "acceleration": {
+        "front_avg_slip": 0.9982,
+        "rear_avg_slip": 1.0605,
+        "balance": -0.0623
+      }
+    },
+    "threshold_used": 1.15
+  },
+  "platform_behavior": {
+    "avg_pitch": -0.0025577249637334736,
+    "avg_pitch_range": 0.08088560774922371,
+    "avg_roll": 0.009091348672923157,
+    "max_roll": 0.032341147772967815,
+    "pitch_consistency": 0.01429583469450207,
+    "roll_consistency": 0.011135024296663274
+  },
+  "road_summary": {
+    "avg_banking": 57.23320777654381,
+    "max_banking": 57.2958
+  },
+  "suspension_summary": {
+    "avg_body_height": 0.09406632148026967,
+    "lowest_body_height": 0.05876636505126953,
+    "body_height_consistency": 0.00585052126565371,
+    "corner_compression_avg": {
+      "fl": 0.2356433264311273,
+      "fr": 0.22889620850669753,
+      "rl": 0.2214540355527786,
+      "rr": 0.21659489886441546
+    }
+  },
+  "tire_summary": {
+    "temperature_averages": {
+      "fl": 68.9617261416005,
+      "fr": 63.89633743499362,
+      "rl": 67.06149472427691,
+      "rr": 63.904455375764385
+    },
+    "slip_ratio_averages": {
+      "fl": 0.9860074124207726,
+      "fr": 0.9774988372713691,
+      "rl": 1.0326437573864786,
+      "rr": 1.0310401345998916
+    }
+  },
+  "engine_summary": {
+    "avg_rpm_utilization": 0.7244960416210501,
+    "avg_oil_temp": 110.0,
+    "avg_water_temp": 85.0
+  },
+  "transmission_summary": {
+    "gear_ratios": {
+      "gear_1": 3.2900002002716064,
+      "gear_2": 2.1600000858306885,
+      "gear_3": 1.6100001335144043,
+      "gear_4": 1.2700001001358032,
+      "gear_5": 1.03000009059906,
+      "gear_6": 0.8200000524520874,
+      "gear_7": 0.0,
+      "gear_8": 0.0
+    },
+    "transmission_top_speed": 3.000000238418579
+  },
+  "individual_laps": [
+    {
+      "lap_summary": {
+        "total_data_points": 3623,
+        "lap_time": 60.426468,
+        "max_speed": 204.68629302978516,
+        "avg_speed": 123.79083861399184,
+        "max_rpm": 8572.0,
+        "avg_rpm": 6608.831631244825
+      },
+      "platform_dynamics": {
+        "avg_pitch": -0.0032710986693526983,
+        "max_pitch_range": 0.0784105658531189,
+        "avg_roll": 0.008889024798584524,
+        "max_roll": 0.028680453076958656,
+        "pitch_stability": 0.01407403216743966,
+        "roll_stability": 0.010725088424568697
+      },
+      "suspension_behavior": {
+        "avg_body_height": 0.09390617452568024,
+        "min_body_height": 0.06427669525146484,
+        "body_height_variation": 0.005851175829059283,
+        "suspension_travel": {
+          "fl_avg": 0.2361339753935293,
+          "fr_avg": 0.22870803097319017,
+          "rl_avg": 0.22182594312921994,
+          "rr_avg": 0.21642650350858386,
+          "fl_max": 0.2813741862773895,
+          "fr_max": 0.267846018075943,
+          "rl_max": 0.2664753794670105,
+          "rr_max": 0.25398123264312744
+        },
+        "front_rear_balance": {
+          "avg_front_compression": 0.23242100318335973,
+          "avg_rear_compression": 0.2191262233189019
+        }
+      },
+      "road_analysis": {
+        "banking": {
+          "avg_angle": 57.23394103774807,
+          "max_left_bank": 56.99134079378843,
+          "max_right_bank": 57.2958
+        },
+        "elevation": {
+          "avg_gradient": -0.0003546149300060716,
+          "max_uphill": 0.0883084386587143,
+          "max_downhill": -0.09246746450662613
+        }
+      },
+      "tire_analysis": {
+        "temperatures": {
+          "fl_avg": 62.42731078145519,
+          "fr_avg": 60.40796172404993,
+          "rl_avg": 62.50087168412152,
+          "rr_avg": 60.81313640374424,
+          "fl_max": 77.5953598022461,
+          "fr_max": 70.42774963378906,
+          "rl_max": 97.10587310791016,
+          "rr_max": 67.13346862792969,
+          "fl_min": 60.043766021728516,
+          "fr_min": 59.436737060546875,
+          "rl_min": 61.41840744018555,
+          "rr_min": 60.407169342041016,
+          "temp_spread": 37.66913604736328
+        },
+        "slip_ratios": {
+          "fl_avg": 0.9861897668542012,
+          "fr_avg": 0.9771801956512759,
+          "rl_avg": 1.0226057990231485,
+          "rr_avg": 1.0205903994402332,
+          "fl_max": 1.0328377394054777,
+          "fr_max": 1.0393241997875902,
+          "rl_max": 1.1488944456517889,
+          "rr_max": 1.1488944456517889,
+          "front_slip_avg": 0.9816849812527386,
+          "rear_slip_avg": 1.0215980992316909
+        },
+        "tire_work_distribution": {
+          "front_vs_rear_temp": -0.23936779118032092,
+          "left_vs_right_temp": 1.8535421688912734
+        }
+      },
+      "engine_analysis": {
+        "power_delivery": {
+          "avg_rpm": 6608.831631244825,
+          "max_rpm": 8572.0,
+          "rpm_utilization": 0.7343146256938694,
+          "avg_gear": 3.032845707976815
+        },
+        "thermal_management": {
+          "avg_oil_temp": 110.0,
+          "max_oil_temp": 110.0,
+          "avg_water_temp": 85.0,
+          "max_water_temp": 85.0,
+          "avg_oil_pressure": 6.647650403605289
+        },
+        "forced_induction": {
+          "has_turbo": 0.0,
+          "avg_boost": 0.0,
+          "max_boost": 0.0
+        }
+      },
+      "transmission_analysis": {
+        "gear_ratios": {
+          "gear_1": 3.2900002002716064,
+          "gear_2": 2.1600000858306885,
+          "gear_3": 1.6100001335144043,
+          "gear_4": 1.2700001001358032,
+          "gear_5": 1.03000009059906,
+          "gear_6": 0.8200000524520874,
+          "gear_7": 0.0,
+          "gear_8": 0.0
+        },
+        "transmission_top_speed": 3.000000238418579,
+        "gear_usage": {
+          "gear_4": 25.23,
+          "gear_3": 40.74,
+          "gear_2": 30.0,
+          "gear_5": 4.03
+        }
+      },
+      "clutch_analysis": {
+        "avg_clutch_position": 0.04002208114821971,
+        "avg_clutch_engagement": 0.9599779188517803,
+        "clutch_events": 145
+      },
+      "phase_analysis": {
+        "braking_phase": {
+          "data_points": 562,
+          "avg_pitch": 0.000337918853785783,
+          "avg_roll": 0.006014054006643368,
+          "avg_body_height": 0.08712898794018077,
+          "avg_speed": 133.68504225707136,
+          "suspension_compression": {
+            "fl": 0.25322852848475513,
+            "fr": 0.24570021088967545,
+            "rl": 0.21879162766649204,
+            "rr": 0.21230555386729935
+          },
+          "tire_temps": {
+            "fl": 60.90502017418261,
+            "fr": 60.02954691415155,
+            "rl": 61.744729194776866,
+            "rr": 60.734098346207915
+          },
+          "tire_slip_ratios": {
+            "fl": 0.9069276053321421,
+            "fr": 0.8900966982730546,
+            "rl": 0.9528070579859528,
+            "rr": 0.9501451604866928
+          },
+          "engine_metrics": {
+            "avg_rpm": 6168.1654804270465,
+            "avg_throttle": 3.3354266973693396,
+            "avg_brake": 84.70588235294117
+          }
+        },
+        "cornering_phase": {
+          "data_points": 1366,
+          "avg_pitch": -7.918444264401978e-05,
+          "avg_roll": 0.015835676417927397,
+          "avg_body_height": 0.09444170745190555,
+          "avg_speed": 102.77848410487698,
+          "suspension_compression": {
+            "fl": 0.23716784403884394,
+            "fr": 0.22669830799408225,
+            "rl": 0.22219818273060143,
+            "rr": 0.21515045243030412
+          },
+          "tire_temps": {
+            "fl": 63.210703705973366,
+            "fr": 60.706373985480425,
+            "rl": 62.09139288850619,
+            "rr": 60.716774570470676
+          },
+          "tire_slip_ratios": {
+            "fl": 0.9912203330227142,
+            "fr": 0.9814648499259716,
+            "rl": 1.0230977440867688,
+            "rr": 1.0206531622355794
+          },
+          "engine_metrics": {
+            "avg_rpm": 6289.073938506589,
+            "avg_throttle": 41.88040076938535,
+            "avg_brake": 6.23776304079465
+          }
+        },
+        "acceleration_phase": {
+          "data_points": 1846,
+          "avg_pitch": -0.00628624505293152,
+          "avg_roll": 0.008357180705850738,
+          "avg_body_height": 0.09703116608079308,
+          "avg_speed": 134.55686028047603,
+          "suspension_compression": {
+            "fl": 0.22548205250488718,
+            "fr": 0.2234648782295757,
+            "rl": 0.22178236181209043,
+            "rr": 0.2202710200863954
+          },
+          "tire_temps": {
+            "fl": 62.20682364863667,
+            "fr": 60.427013740250246,
+            "rl": 63.01656501290599,
+            "rr": 60.89741025120827
+          },
+          "tire_slip_ratios": {
+            "fl": 0.9994230808570324,
+            "fr": 0.9955981393445381,
+            "rl": 1.050709761036675,
+            "rr": 1.0506499132159222
+          },
+          "engine_metrics": {
+            "avg_rpm": 7156.559588299025,
+            "avg_throttle": 88.39164701633634,
+            "avg_brake": 1.1063667070295073
+          }
+        },
+        "high_speed_phase": {
+          "data_points": 2849,
+          "avg_pitch": -0.003538580385647896,
+          "avg_roll": 0.007324125527320441,
+          "avg_body_height": 0.09425939276955679,
+          "avg_speed": 138.2771574570029,
+          "suspension_compression": {
+            "fl": 0.23527155817601086,
+            "fr": 0.22806963696945087,
+            "rl": 0.22206899013779546,
+            "rr": 0.21649222356806977
+          },
+          "tire_temps": {
+            "fl": 62.095162724728915,
+            "fr": 60.2202878880392,
+            "rl": 62.72593495752904,
+            "rr": 60.86293874133382
+          },
+          "tire_slip_ratios": {
+            "fl": 0.9838369572626547,
+            "fr": 0.9756259602159467,
+            "rl": 1.0226259179518582,
+            "rr": 1.0218201276019554
+          },
+          "engine_metrics": {
+            "avg_rpm": 6994.392418392418,
+            "avg_throttle": 56.546431840549495,
+            "avg_brake": 16.324544559838678
+          }
+        }
+      },
+      "lap_number": 1,
+      "data_points_analyzed": 3623,
+      "data_points_total": 3623
+    },
+    {
+      "lap_summary": {
+        "total_data_points": 3604,
+        "lap_time": 60.143429,
+        "max_speed": 201.54115447998046,
+        "avg_speed": 124.15257336619692,
+        "max_rpm": 8799.0,
+        "avg_rpm": 6682.338235294118
+      },
+      "platform_dynamics": {
+        "avg_pitch": -0.0033476952721705126,
+        "max_pitch_range": 0.0798625610768795,
+        "avg_roll": 0.00833762890822913,
+        "max_roll": 0.027998868376016617,
+        "pitch_stability": 0.014014699738071422,
+        "roll_stability": 0.010333164286032854
+      },
+      "suspension_behavior": {
+        "avg_body_height": 0.09391215498188095,
+        "min_body_height": 0.06978511810302734,
+        "body_height_variation": 0.005683258931353218,
+        "suspension_travel": {
+          "fl_avg": 0.23576506051120166,
+          "fr_avg": 0.22915114948193188,
+          "rl_avg": 0.2215918980365191,
+          "rr_avg": 0.2165755268173927,
+          "fl_max": 0.2746996581554413,
+          "fr_max": 0.26924413442611694,
+          "rl_max": 0.2627583146095276,
+          "rr_max": 0.23751938343048096
+        },
+        "front_rear_balance": {
+          "avg_front_compression": 0.23245810499656677,
+          "avg_rear_compression": 0.2190837124269559
+        }
+      },
+      "road_analysis": {
+        "banking": {
+          "avg_angle": 57.23630159251627,
+          "max_left_bank": 56.9868055465579,
+          "max_right_bank": 57.29579316980839
+        },
+        "elevation": {
+          "avg_gradient": 0.0003291527964019538,
+          "max_uphill": 0.08740479499101639,
+          "max_downhill": -0.09198632836341858
+        }
+      },
+      "tire_analysis": {
+        "temperatures": {
+          "fl_avg": 65.37899713590328,
+          "fr_avg": 62.18710701844007,
+          "rl_avg": 65.98084667387866,
+          "rr_avg": 62.16484490245349,
+          "fl_max": 83.05878448486328,
+          "fr_max": 76.87628936767578,
+          "rl_max": 130.3770294189453,
+          "rr_max": 81.76681518554688,
+          "fl_min": 62.37801742553711,
+          "fr_min": 60.31135559082031,
+          "rl_min": 63.00983810424805,
+          "rr_min": 60.99860763549805,
+          "temp_spread": 70.065673828125
+        },
+        "slip_ratios": {
+          "fl_avg": 0.9851574322181764,
+          "fr_avg": 0.9762729991235928,
+          "rl_avg": 1.0284748439862235,
+          "rr_avg": 1.0265583256376776,
+          "fl_max": 1.0503685801526146,
+          "fr_max": 1.0321362122083446,
+          "rl_max": 1.3690756091740024,
+          "rr_max": 1.3690756091740024,
+          "front_slip_avg": 0.9807152156708846,
+          "rear_slip_avg": 1.0275165848119505
+        },
+        "tire_work_distribution": {
+          "front_vs_rear_temp": -0.28979371099440243,
+          "left_vs_right_temp": 3.503945944444183
+        }
+      },
+      "engine_analysis": {
+        "power_delivery": {
+          "avg_rpm": 6682.338235294118,
+          "max_rpm": 8799.0,
+          "rpm_utilization": 0.7424820261437909,
+          "avg_gear": 3.02968923418424
+        },
+        "thermal_management": {
+          "avg_oil_temp": 110.0,
+          "max_oil_temp": 110.0,
+          "avg_water_temp": 85.0,
+          "max_water_temp": 85.0,
+          "avg_oil_pressure": 6.659460331570692
+        },
+        "forced_induction": {
+          "has_turbo": 0.0,
+          "avg_boost": 0.0,
+          "max_boost": 0.0
+        }
+      },
+      "transmission_analysis": {
+        "gear_ratios": {
+          "gear_1": 3.2900002002716064,
+          "gear_2": 2.1600000858306885,
+          "gear_3": 1.6100001335144043,
+          "gear_4": 1.2700001001358032,
+          "gear_5": 1.03000009059906,
+          "gear_6": 0.8200000524520874,
+          "gear_7": 0.0,
+          "gear_8": 0.0
+        },
+        "transmission_top_speed": 3.000000238418579,
+        "gear_usage": {
+          "gear_4": 25.39,
+          "gear_5": 3.61,
+          "gear_3": 41.37,
+          "gear_2": 29.63
+        }
+      },
+      "clutch_analysis": {
+        "avg_clutch_position": 0.045782463928967815,
+        "avg_clutch_engagement": 0.9542175360710322,
+        "clutch_events": 165
+      },
+      "phase_analysis": {
+        "braking_phase": {
+          "data_points": 543,
+          "avg_pitch": -0.00046458703801927753,
+          "avg_roll": 0.0063301106015714245,
+          "avg_body_height": 0.08734209761435156,
+          "avg_speed": 137.75198103762463,
+          "suspension_compression": {
+            "fl": 0.25317960135076145,
+            "fr": 0.24537320876867952,
+            "rl": 0.21875902107517145,
+            "rr": 0.2121712536607658
+          },
+          "tire_temps": {
+            "fl": 63.4534900377249,
+            "fr": 61.090577555844355,
+            "rl": 63.51117008693969,
+            "rr": 61.49127913136069
+          },
+          "tire_slip_ratios": {
+            "fl": 0.8995113343283924,
+            "fr": 0.883764508663698,
+            "rl": 0.9502716760612122,
+            "rr": 0.9474635821164921
+          },
+          "engine_metrics": {
+            "avg_rpm": 6186.438305709024,
+            "avg_throttle": 3.8796807857581346,
+            "avg_brake": 87.20687538367096
+          }
+        },
+        "cornering_phase": {
+          "data_points": 1276,
+          "avg_pitch": -0.0002843692063406507,
+          "avg_roll": 0.01564055881725747,
+          "avg_body_height": 0.09382278453500294,
+          "avg_speed": 101.50624797247048,
+          "suspension_compression": {
+            "fl": 0.23916383856049153,
+            "fr": 0.22783280373040038,
+            "rl": 0.22227140096801576,
+            "rr": 0.21430816097319313
+          },
+          "tire_temps": {
+            "fl": 66.13550648943384,
+            "fr": 62.66608669316881,
+            "rl": 64.00581046555857,
+            "rr": 61.76014120526448
+          },
+          "tire_slip_ratios": {
+            "fl": 0.9901163208578398,
+            "fr": 0.9750089109770902,
+            "rl": 1.0243753334723702,
+            "rr": 1.020527488535535
+          },
+          "engine_metrics": {
+            "avg_rpm": 6273.974921630094,
+            "avg_throttle": 35.27598500215133,
+            "avg_brake": 7.056672198660028
+          }
+        },
+        "acceleration_phase": {
+          "data_points": 1937,
+          "avg_pitch": -0.00591102141293033,
+          "avg_roll": 0.007399744922269069,
+          "avg_body_height": 0.09690564221552986,
+          "avg_speed": 131.8265198183232,
+          "suspension_compression": {
+            "fl": 0.2252794653792694,
+            "fr": 0.22432057881053724,
+            "rl": 0.2212353975473142,
+            "rr": 0.22058602202843314
+          },
+          "tire_temps": {
+            "fl": 65.030239906764,
+            "fr": 62.18997208137886,
+            "rl": 67.67720417737591,
+            "rr": 62.59209825577783
+          },
+          "tire_slip_ratios": {
+            "fl": 0.9990030696562545,
+            "fr": 0.9960397594928939,
+            "rl": 1.0614317712427506,
+            "rr": 1.0613916443714912
+          },
+          "engine_metrics": {
+            "avg_rpm": 7189.201342281879,
+            "avg_throttle": 86.3445595068177,
+            "avg_brake": 1.045076781357871
+          }
+        },
+        "high_speed_phase": {
+          "data_points": 2934,
+          "avg_pitch": -0.003222807299431595,
+          "avg_roll": 0.007169844033314809,
+          "avg_body_height": 0.09430830185723776,
+          "avg_speed": 136.29255323585556,
+          "suspension_compression": {
+            "fl": 0.2348203143509944,
+            "fr": 0.22868981146353318,
+            "rl": 0.22169202808404992,
+            "rr": 0.21660258616406494
+          },
+          "tire_temps": {
+            "fl": 64.06751231978195,
+            "fr": 61.45426779306902,
+            "rl": 66.50268946038514,
+            "rr": 62.35377904583827
+          },
+          "tire_slip_ratios": {
+            "fl": 0.9827621717066526,
+            "fr": 0.975825179614017,
+            "rl": 1.0278475762346586,
+            "rr": 1.02701643260685
+          },
+          "engine_metrics": {
+            "avg_rpm": 7003.569870483981,
+            "avg_throttle": 55.14882981140651,
+            "avg_brake": 16.1777403531283
+          }
+        }
+      },
+      "lap_number": 2,
+      "data_points_analyzed": 3604,
+      "data_points_total": 3604
+    },
+    {
+      "lap_summary": {
+        "total_data_points": 3624,
+        "lap_time": 60.47948,
+        "max_speed": 207.30907287597657,
+        "avg_speed": 124.08699330336212,
+        "max_rpm": 8602.0,
+        "avg_rpm": 6622.038355408388
+      },
+      "platform_dynamics": {
+        "avg_pitch": -0.003407286374455343,
+        "max_pitch_range": 0.07865780219435692,
+        "avg_roll": 0.008821495709327299,
+        "max_roll": 0.030481822788715363,
+        "pitch_stability": 0.014363299648206367,
+        "roll_stability": 0.010588388744215175
+      },
+      "suspension_behavior": {
+        "avg_body_height": 0.09392436366799652,
+        "min_body_height": 0.06978893280029297,
+        "body_height_variation": 0.005573085742610863,
+        "suspension_travel": {
+          "fl_avg": 0.2360274495955795,
+          "fr_avg": 0.22889349205834714,
+          "rl_avg": 0.22157177657185012,
+          "rr_avg": 0.2165462031064115,
+          "fl_max": 0.2740934491157532,
+          "fr_max": 0.2660321593284607,
+          "rl_max": 0.2613002359867096,
+          "rr_max": 0.23687171936035156
+        },
+        "front_rear_balance": {
+          "avg_front_compression": 0.2324604708269633,
+          "avg_rear_compression": 0.2190589898391308
+        }
+      },
+      "road_analysis": {
+        "banking": {
+          "avg_angle": 57.23345681541298,
+          "max_left_bank": 56.991064171028135,
+          "max_right_bank": 57.295356037545204
+        },
+        "elevation": {
+          "avg_gradient": -0.00010982638872053811,
+          "max_uphill": 0.08797960728406906,
+          "max_downhill": -0.09255735576152802
+        }
+      },
+      "tire_analysis": {
+        "temperatures": {
+          "fl_avg": 67.2689522454807,
+          "fr_avg": 62.726249577983324,
+          "rl_avg": 64.97855957401772,
+          "rr_avg": 62.08581525495247,
+          "fl_max": 82.5424575805664,
+          "fr_max": 75.57113647460938,
+          "rl_max": 68.1805191040039,
+          "rr_max": 62.309356689453125,
+          "fl_min": 64.30042266845703,
+          "fr_min": 61.25503158569336,
+          "rl_min": 64.72261047363281,
+          "rr_min": 61.8328857421875,
+          "temp_spread": 21.287425994873047
+        },
+        "slip_ratios": {
+          "fl_avg": 0.9853094125001007,
+          "fr_avg": 0.9765500071929475,
+          "rl_avg": 1.021421465370041,
+          "rr_avg": 1.0195071046356576,
+          "fl_max": 1.0328960288574363,
+          "fr_max": 1.0329909745277994,
+          "rl_max": 1.1162163220156425,
+          "rr_max": 1.1162163220156425,
+          "front_slip_avg": 0.9809297098465242,
+          "rear_slip_avg": 1.0204642850028494
+        },
+        "tire_work_distribution": {
+          "front_vs_rear_temp": 1.4654134972469137,
+          "left_vs_right_temp": 3.717723493281312
+        }
+      },
+      "engine_analysis": {
+        "power_delivery": {
+          "avg_rpm": 6622.038355408388,
+          "max_rpm": 8602.0,
+          "rpm_utilization": 0.7357820394898209,
+          "avg_gear": 3.0361479028697573
+        },
+        "thermal_management": {
+          "avg_oil_temp": 110.0,
+          "max_oil_temp": 110.0,
+          "avg_water_temp": 85.0,
+          "max_water_temp": 85.0,
+          "avg_oil_pressure": 6.65070033033952
+        },
+        "forced_induction": {
+          "has_turbo": 0.0,
+          "avg_boost": 0.0,
+          "max_boost": 0.0
+        }
+      },
+      "transmission_analysis": {
+        "gear_ratios": {
+          "gear_1": 3.2900002002716064,
+          "gear_2": 2.1600000858306885,
+          "gear_3": 1.6100001335144043,
+          "gear_4": 1.2700001001358032,
+          "gear_5": 1.03000009059906,
+          "gear_6": 0.8200000524520874,
+          "gear_7": 0.0,
+          "gear_8": 0.0
+        },
+        "transmission_top_speed": 3.000000238418579,
+        "gear_usage": {
+          "gear_4": 26.05,
+          "gear_3": 40.26,
+          "gear_2": 29.94,
+          "gear_5": 3.75
+        }
+      },
+      "clutch_analysis": {
+        "avg_clutch_position": 0.039735099337748346,
+        "avg_clutch_engagement": 0.9602649006622517,
+        "clutch_events": 144
+      },
+      "phase_analysis": {
+        "braking_phase": {
+          "data_points": 564,
+          "avg_pitch": 0.0008578056941516466,
+          "avg_roll": 0.007105573804644292,
+          "avg_body_height": 0.08728389790717592,
+          "avg_speed": 134.59557471985514,
+          "suspension_compression": {
+            "fl": 0.25206656801573774,
+            "fr": 0.2464117690498102,
+            "rl": 0.217811662677332,
+            "rr": 0.2131968633080205
+          },
+          "tire_temps": {
+            "fl": 65.1787541166265,
+            "fr": 61.94967438312287,
+            "rl": 64.85298462455154,
+            "rr": 62.090779994396456
+          },
+          "tire_slip_ratios": {
+            "fl": 0.9049476824680255,
+            "fr": 0.8933561916446123,
+            "rl": 0.9522747866559305,
+            "rr": 0.9494273001987265
+          },
+          "engine_metrics": {
+            "avg_rpm": 6139.124113475177,
+            "avg_throttle": 2.8076762619941595,
+            "avg_brake": 84.90196078431373
+          }
+        },
+        "cornering_phase": {
+          "data_points": 1256,
+          "avg_pitch": 0.0005294277511053618,
+          "avg_roll": 0.015976318647598575,
+          "avg_body_height": 0.09392397608726648,
+          "avg_speed": 100.39076288551281,
+          "suspension_compression": {
+            "fl": 0.2393652187411193,
+            "fr": 0.2272463515044967,
+            "rl": 0.22233712759794325,
+            "rr": 0.21423005784867674
+          },
+          "tire_temps": {
+            "fl": 69.02261259601374,
+            "fr": 63.16049772918604,
+            "rl": 65.08095280228147,
+            "rr": 62.04893346652863
+          },
+          "tire_slip_ratios": {
+            "fl": 0.9895041427603097,
+            "fr": 0.9769272775347888,
+            "rl": 1.0192704117418514,
+            "rr": 1.0158968014819738
+          },
+          "engine_metrics": {
+            "avg_rpm": 6223.029458598726,
+            "avg_throttle": 35.715311602347946,
+            "avg_brake": 7.749469214437368
+          }
+        },
+        "acceleration_phase": {
+          "data_points": 1950,
+          "avg_pitch": -0.0067261434963961034,
+          "avg_roll": 0.008145745288198575,
+          "avg_body_height": 0.09667873296982203,
+          "avg_speed": 132.6079887401874,
+          "suspension_compression": {
+            "fl": 0.22638375277702624,
+            "fr": 0.22366796508813516,
+            "rl": 0.22203719025238966,
+            "rr": 0.22014035422068376
+          },
+          "tire_temps": {
+            "fl": 66.97350448217148,
+            "fr": 62.64675319573818,
+            "rl": 64.99755430563903,
+            "rr": 62.09446950472318
+          },
+          "tire_slip_ratios": {
+            "fl": 0.9995035416819705,
+            "fr": 0.994981362978348,
+            "rl": 1.0477966902292648,
+            "rr": 1.0477784389999518
+          },
+          "engine_metrics": {
+            "avg_rpm": 7109.115384615385,
+            "avg_throttle": 85.00191050779286,
+            "avg_brake": 0.8937154348919055
+          }
+        },
+        "high_speed_phase": {
+          "data_points": 2961,
+          "avg_pitch": -0.003278071518899113,
+          "avg_roll": 0.00781724943428669,
+          "avg_body_height": 0.0943136823334351,
+          "avg_speed": 136.11560553228963,
+          "suspension_compression": {
+            "fl": 0.23530690291470588,
+            "fr": 0.22828832705030566,
+            "rl": 0.2217213579757678,
+            "rr": 0.21648020672459975
+          },
+          "tire_temps": {
+            "fl": 66.42623400986093,
+            "fr": 62.14270790844743,
+            "rl": 65.01586901179361,
+            "rr": 62.10607871249172
+          },
+          "tire_slip_ratios": {
+            "fl": 0.9838024521494806,
+            "fr": 0.976125279298817,
+            "rl": 1.020660283915361,
+            "rr": 1.019517394678248
+          },
+          "engine_metrics": {
+            "avg_rpm": 6941.093211752786,
+            "avg_throttle": 54.50953904020237,
+            "avg_brake": 15.867320923641323
+          }
+        }
+      },
+      "lap_number": 3,
+      "data_points_analyzed": 3624,
+      "data_points_total": 3624
+    },
+    {
+      "lap_summary": {
+        "total_data_points": 4423,
+        "lap_time": 93.270072,
+        "max_speed": 202.7515594482422,
+        "avg_speed": 102.06071134843629,
+        "max_rpm": 8823.0,
+        "avg_rpm": 5854.38797196473
+      },
+      "platform_dynamics": {
+        "avg_pitch": 0.001129842201228163,
+        "max_pitch_range": 0.10574507713317871,
+        "avg_roll": 0.01125016756785878,
+        "max_roll": 0.05174001678824425,
+        "pitch_stability": 0.019576229723540117,
+        "roll_stability": 0.015122620803803225
+      },
+      "suspension_behavior": {
+        "avg_body_height": 0.09509363909288415,
+        "min_body_height": 0.05876636505126953,
+        "body_height_variation": 0.0071129192127646615,
+        "suspension_travel": {
+          "fl_avg": 0.23308457248544576,
+          "fr_avg": 0.22922390379330004,
+          "rl_avg": 0.21980644476149597,
+          "rr_avg": 0.21720447832107437,
+          "fl_max": 0.2825640141963959,
+          "fr_max": 0.30487409234046936,
+          "rl_max": 0.26098310947418213,
+          "rr_max": 0.2572338581085205
+        },
+        "front_rear_balance": {
+          "avg_front_compression": 0.23115423813937291,
+          "avg_rear_compression": 0.21850546154128517
+        }
+      },
+      "road_analysis": {
+        "banking": {
+          "avg_angle": 57.20075235609391,
+          "max_left_bank": 56.69705857307911,
+          "max_right_bank": 57.2956907169342
+        },
+        "elevation": {
+          "avg_gradient": 0.0018381511442097005,
+          "max_uphill": 0.08852634578943253,
+          "max_downhill": -0.09314066171646118
+        }
+      },
+      "tire_analysis": {
+        "temperatures": {
+          "fl_avg": 67.86214537925643,
+          "fr_avg": 64.50933605627914,
+          "rl_avg": 66.90550511718308,
+          "rr_avg": 64.32979099809275,
+          "fl_max": 86.08174133300781,
+          "fr_max": 148.70828247070312,
+          "rl_max": 95.23905181884766,
+          "rr_max": 149.84388732910156,
+          "fl_min": 65.79177856445312,
+          "fr_min": 62.13737869262695,
+          "rl_min": 65.50694274902344,
+          "rr_min": 62.15312194824219,
+          "temp_spread": 87.70650863647461
+        },
+        "slip_ratios": {
+          "fl_avg": 0.9947306404259161,
+          "fr_avg": 0.9905215260369957,
+          "rl_avg": 1.116278183291136,
+          "rr_avg": 1.118626184886632,
+          "fl_max": 1.8570820297271562,
+          "fr_max": 1.3223824015639118,
+          "rl_max": 4.982877788931951,
+          "rr_max": 4.982877788931951,
+          "front_slip_avg": 0.992626083231456,
+          "rear_slip_avg": 1.1174521840888838
+        },
+        "tire_work_distribution": {
+          "front_vs_rear_temp": 0.5680926601298637,
+          "left_vs_right_temp": 2.9642617210338074
+        }
+      },
+      "engine_analysis": {
+        "power_delivery": {
+          "avg_rpm": 5854.38797196473,
+          "max_rpm": 8823.0,
+          "rpm_utilization": 0.6504875524405256,
+          "avg_gear": 2.8441093789931
+        },
+        "thermal_management": {
+          "avg_oil_temp": 110.0,
+          "max_oil_temp": 110.0,
+          "avg_water_temp": 85.0,
+          "max_water_temp": 85.0,
+          "avg_oil_pressure": 6.095496704344995
+        },
+        "forced_induction": {
+          "has_turbo": 0.0,
+          "avg_boost": 0.0,
+          "max_boost": 0.0
+        }
+      },
+      "transmission_analysis": {
+        "gear_ratios": {
+          "gear_1": 3.2900002002716064,
+          "gear_2": 2.1600000858306885,
+          "gear_3": 1.6100001335144043,
+          "gear_4": 1.2700001001358032,
+          "gear_5": 1.03000009059906,
+          "gear_6": 0.8200000524520874,
+          "gear_7": 0.0,
+          "gear_8": 0.0
+        },
+        "transmission_top_speed": 3.000000238418579,
+        "gear_usage": {
+          "gear_4": 22.74,
+          "gear_5": 3.73,
+          "gear_3": 40.28,
+          "gear_2": 20.7,
+          "gear_1": 12.55
+        }
+      },
+      "clutch_analysis": {
+        "avg_clutch_position": 0.15351571331675334,
+        "avg_clutch_engagement": 0.8464842866832467,
+        "clutch_events": 679
+      },
+      "phase_analysis": {
+        "braking_phase": {
+          "data_points": 459,
+          "avg_pitch": -0.00012118857372186932,
+          "avg_roll": 0.007037201105243646,
+          "avg_body_height": 0.0877575760053913,
+          "avg_speed": 135.50713521919997,
+          "suspension_compression": {
+            "fl": 0.2541959158150978,
+            "fr": 0.24318517238096474,
+            "rl": 0.22018529487721022,
+            "rr": 0.2103942344391268
+          },
+          "tire_temps": {
+            "fl": 68.35360335472622,
+            "fr": 62.62521054801858,
+            "rl": 65.77966172295199,
+            "rr": 62.43936680812462
+          },
+          "tire_slip_ratios": {
+            "fl": 0.9008885209676937,
+            "fr": 0.8798842644242414,
+            "rl": 0.9498409747864022,
+            "rr": 0.9443582129451521
+          },
+          "engine_metrics": {
+            "avg_rpm": 6099.782135076252,
+            "avg_throttle": 2.9082831389636468,
+            "avg_brake": 83.91900551070101
+          }
+        },
+        "cornering_phase": {
+          "data_points": 1177,
+          "avg_pitch": -0.005656258360155959,
+          "avg_roll": 0.01563192597062611,
+          "avg_body_height": 0.09493796933781017,
+          "avg_speed": 102.41336303911882,
+          "suspension_compression": {
+            "fl": 0.2348804479067672,
+            "fr": 0.2279221894331878,
+            "rl": 0.22156930049547424,
+            "rr": 0.21566789124411045
+          },
+          "tire_temps": {
+            "fl": 68.39773838947461,
+            "fr": 63.98335994373668,
+            "rl": 66.43672642347259,
+            "rr": 62.59246018830253
+          },
+          "tire_slip_ratios": {
+            "fl": 0.9826234291468957,
+            "fr": 0.9781056303307435,
+            "rl": 1.0312547952945215,
+            "rr": 1.0306617873208481
+          },
+          "engine_metrics": {
+            "avg_rpm": 6423.816482582838,
+            "avg_throttle": 42.0743998533993,
+            "avg_brake": 8.042380928582137
+          }
+        },
+        "acceleration_phase": {
+          "data_points": 2038,
+          "avg_pitch": -0.004204056329826096,
+          "avg_roll": 0.00881823982653972,
+          "avg_body_height": 0.09694668530715927,
+          "avg_speed": 120.78101889954057,
+          "suspension_compression": {
+            "fl": 0.2257179159221401,
+            "fr": 0.22338590831646624,
+            "rl": 0.22143347672496624,
+            "rr": 0.2207991451434462
+          },
+          "tire_temps": {
+            "fl": 67.32543749149461,
+            "fr": 63.77046892055702,
+            "rl": 66.84092943380578,
+            "rr": 63.01262126469636
+          },
+          "tire_slip_ratios": {
+            "fl": 1.008819615742425,
+            "fr": 0.9993887346668895,
+            "rl": 1.1376214517192589,
+            "rr": 1.1375413630253353
+          },
+          "engine_metrics": {
+            "avg_rpm": 6879.164376840039,
+            "avg_throttle": 84.95834054917354,
+            "avg_brake": 0.7554503646404587
+          }
+        },
+        "high_speed_phase": {
+          "data_points": 2904,
+          "avg_pitch": -0.00392406554321256,
+          "avg_roll": 0.007256307762091179,
+          "avg_body_height": 0.09453132831730134,
+          "avg_speed": 136.6744022865926,
+          "suspension_compression": {
+            "fl": 0.23426300539704395,
+            "fr": 0.22866158201243758,
+            "rl": 0.22146366712619286,
+            "rr": 0.21689273766947514
+          },
+          "tire_temps": {
+            "fl": 66.95810017966699,
+            "fr": 62.85220378161134,
+            "rl": 66.40694748534315,
+            "rr": 62.65433170513016
+          },
+          "tire_slip_ratios": {
+            "fl": 0.9819220179477226,
+            "fr": 0.9772860788743997,
+            "rl": 1.0206562640376275,
+            "rr": 1.0196150734784775
+          },
+          "engine_metrics": {
+            "avg_rpm": 6919.673209366391,
+            "avg_throttle": 52.45692216280452,
+            "avg_brake": 13.02584670231729
+          }
+        }
+      },
+      "lap_number": 4,
+      "data_points_analyzed": 4423,
+      "data_points_total": 5591
+    },
+    {
+      "lap_summary": {
+        "total_data_points": 3635,
+        "lap_time": 60.715838,
+        "max_speed": 204.0219223022461,
+        "avg_speed": 122.8306034676868,
+        "max_rpm": 8759.0,
+        "avg_rpm": 6534.089958734526
+      },
+      "platform_dynamics": {
+        "avg_pitch": -0.0023118307236889494,
+        "max_pitch_range": 0.07700350880622864,
+        "avg_roll": 0.008818873214873532,
+        "max_roll": 0.0296165868639946,
+        "pitch_stability": 0.012821062034036046,
+        "roll_stability": 0.010795498603237152
+      },
+      "suspension_behavior": {
+        "avg_body_height": 0.09395911127861789,
+        "min_body_height": 0.0708456039428711,
+        "body_height_variation": 0.005742110454210202,
+        "suspension_travel": {
+          "fl_avg": 0.2359278302040192,
+          "fr_avg": 0.2290417190390079,
+          "rl_avg": 0.22167990587682473,
+          "rr_avg": 0.21632852751090406,
+          "fl_max": 0.277100145816803,
+          "fr_max": 0.26586446166038513,
+          "rl_max": 0.256910115480423,
+          "rr_max": 0.2521548569202423
+        },
+        "front_rear_balance": {
+          "avg_front_compression": 0.23248477462151357,
+          "avg_rear_compression": 0.21900421669386438
+        }
+      },
+      "road_analysis": {
+        "banking": {
+          "avg_angle": 57.24243561616467,
+          "max_left_bank": 56.99043579339981,
+          "max_right_bank": 57.29575560375452
+        },
+        "elevation": {
+          "avg_gradient": 0.0009799102691650402,
+          "max_uphill": 0.08837737888097763,
+          "max_downhill": -0.09216564148664474
+        }
+      },
+      "tire_analysis": {
+        "temperatures": {
+          "fl_avg": 67.84441814396372,
+          "fr_avg": 62.9115460612259,
+          "rl_avg": 66.67570697516818,
+          "rr_avg": 62.8906112272113,
+          "fl_max": 81.59879302978516,
+          "fr_max": 65.70915985107422,
+          "rl_max": 80.07951354980469,
+          "rr_max": 63.09044647216797,
+          "fl_min": 66.177978515625,
+          "fr_min": 62.450103759765625,
+          "rl_min": 66.09871673583984,
+          "rr_min": 62.67837142944336,
+          "temp_spread": 19.14868927001953
+        },
+        "slip_ratios": {
+          "fl_avg": 0.9866614940150612,
+          "fr_avg": 0.9775741483538439,
+          "rl_avg": 1.0228578951626646,
+          "rr_avg": 1.0208072141522722,
+          "fl_max": 1.0395604001893741,
+          "fr_max": 1.0495181562992886,
+          "rl_max": 1.2076227171229732,
+          "rr_max": 1.2076227171229732,
+          "front_slip_avg": 0.9821178211844526,
+          "rear_slip_avg": 1.0218325546574683
+        },
+        "tire_work_distribution": {
+          "front_vs_rear_temp": 0.594823001405075,
+          "left_vs_right_temp": 4.358983915347352
+        }
+      },
+      "engine_analysis": {
+        "power_delivery": {
+          "avg_rpm": 6534.089958734526,
+          "max_rpm": 8759.0,
+          "rpm_utilization": 0.7260099954149473,
+          "avg_gear": 3.0470426409903713
+        },
+        "thermal_management": {
+          "avg_oil_temp": 110.0,
+          "max_oil_temp": 110.0,
+          "avg_water_temp": 85.0,
+          "max_water_temp": 85.0,
+          "avg_oil_pressure": 6.629121265385141
+        },
+        "forced_induction": {
+          "has_turbo": 0.0,
+          "avg_boost": 0.0,
+          "max_boost": 0.0
+        }
+      },
+      "transmission_analysis": {
+        "gear_ratios": {
+          "gear_1": 3.2900002002716064,
+          "gear_2": 2.1600000858306885,
+          "gear_3": 1.6100001335144043,
+          "gear_4": 1.2700001001358032,
+          "gear_5": 1.03000009059906,
+          "gear_6": 0.8200000524520874,
+          "gear_7": 0.0,
+          "gear_8": 0.0
+        },
+        "transmission_top_speed": 3.000000238418579,
+        "gear_usage": {
+          "gear_4": 26.91,
+          "gear_3": 40.58,
+          "gear_2": 29.08,
+          "gear_5": 3.44
+        }
+      },
+      "clutch_analysis": {
+        "avg_clutch_position": 0.039339752407152685,
+        "avg_clutch_engagement": 0.9606602475928473,
+        "clutch_events": 143
+      },
+      "phase_analysis": {
+        "braking_phase": {
+          "data_points": 579,
+          "avg_pitch": 0.000863544828053773,
+          "avg_roll": 0.006404455228920202,
+          "avg_body_height": 0.08713229291385526,
+          "avg_speed": 132.11737533727458,
+          "suspension_compression": {
+            "fl": 0.2526853385418396,
+            "fr": 0.2460484651909797,
+            "rl": 0.21837972292422425,
+            "rr": 0.2127374392099331
+          },
+          "tire_temps": {
+            "fl": 66.74226092139263,
+            "fr": 62.80547144993599,
+            "rl": 66.24763299022932,
+            "rr": 62.904071293964286
+          },
+          "tire_slip_ratios": {
+            "fl": 0.908862448342985,
+            "fr": 0.8960355504202182,
+            "rl": 0.9549824360629224,
+            "rr": 0.9515041117543103
+          },
+          "engine_metrics": {
+            "avg_rpm": 6106.360967184802,
+            "avg_throttle": 2.6062514815943647,
+            "avg_brake": 83.0471739645772
+          }
+        },
+        "cornering_phase": {
+          "data_points": 1151,
+          "avg_pitch": 0.0020453012062901783,
+          "avg_roll": 0.01681579253535158,
+          "avg_body_height": 0.0940468741126106,
+          "avg_speed": 98.68595993877183,
+          "suspension_compression": {
+            "fl": 0.2381196814216188,
+            "fr": 0.2277933142943345,
+            "rl": 0.2218462762032044,
+            "rr": 0.2150102250090275
+          },
+          "tire_temps": {
+            "fl": 68.91451538510161,
+            "fr": 63.00324745741644,
+            "rl": 66.81328992404491,
+            "rr": 62.854958110845786
+          },
+          "tire_slip_ratios": {
+            "fl": 0.9873556339808658,
+            "fr": 0.9747255021385286,
+            "rl": 1.0202339304665824,
+            "rr": 1.0171648950535666
+          },
+          "engine_metrics": {
+            "avg_rpm": 6086.696785403997,
+            "avg_throttle": 38.65215243351902,
+            "avg_brake": 9.75383724297712
+          }
+        },
+        "acceleration_phase": {
+          "data_points": 1901,
+          "avg_pitch": -0.005537121348578565,
+          "avg_roll": 0.00867756269063834,
+          "avg_body_height": 0.09701183798876266,
+          "avg_speed": 131.56595468455902,
+          "suspension_compression": {
+            "fl": 0.2253886176795473,
+            "fr": 0.2236991237098452,
+            "rl": 0.22192773146105088,
+            "rr": 0.22010699286860957
+          },
+          "tire_temps": {
+            "fl": 67.51244970699915,
+            "fr": 62.891346995169584,
+            "rl": 66.97931850539703,
+            "rr": 62.89315854493472
+          },
+          "tire_slip_ratios": {
+            "fl": 0.9997615776731363,
+            "fr": 0.9966896404930533,
+            "rl": 1.0514986706581169,
+            "rr": 1.051498745619369
+          },
+          "engine_metrics": {
+            "avg_rpm": 7114.546554445029,
+            "avg_throttle": 85.92711782240514,
+            "avg_brake": 0.8882837722148302
+          }
+        },
+        "high_speed_phase": {
+          "data_points": 2884,
+          "avg_pitch": -0.0030600661949151883,
+          "avg_roll": 0.007345884419129799,
+          "avg_body_height": 0.09430576755501195,
+          "avg_speed": 137.25260779106998,
+          "suspension_compression": {
+            "fl": 0.2349431990502446,
+            "fr": 0.22860744179597178,
+            "rl": 0.22179764711741104,
+            "rr": 0.21646020960853268
+          },
+          "tire_temps": {
+            "fl": 67.40822088900288,
+            "fr": 62.85717727010359,
+            "rl": 66.80322256101483,
+            "rr": 62.908534237812695
+          },
+          "tire_slip_ratios": {
+            "fl": 0.9845025854520139,
+            "fr": 0.9774473978335829,
+            "rl": 1.0228964146640636,
+            "rr": 1.0218353453357514
+          },
+          "engine_metrics": {
+            "avg_rpm": 6941.248959778086,
+            "avg_throttle": 54.419787332408696,
+            "avg_brake": 15.962035299556716
+          }
+        }
+      },
+      "lap_number": 5,
+      "data_points_analyzed": 3635,
+      "data_points_total": 3635
+    },
+    {
+      "lap_summary": {
+        "total_data_points": 3669,
+        "lap_time": 61.122456,
+        "max_speed": 207.327392578125,
+        "avg_speed": 122.7243002422891,
+        "max_rpm": 8549.0,
+        "avg_rpm": 6531.071409103298
+      },
+      "platform_dynamics": {
+        "avg_pitch": -0.002559638774676499,
+        "max_pitch_range": 0.07863250747323036,
+        "avg_roll": 0.009041745265168167,
+        "max_roll": 0.029037941247224808,
+        "pitch_stability": 0.013067121313482246,
+        "roll_stability": 0.010749143399645092
+      },
+      "suspension_behavior": {
+        "avg_body_height": 0.09406719133196946,
+        "min_body_height": 0.06832027435302734,
+        "body_height_variation": 0.00555712650890512,
+        "suspension_travel": {
+          "fl_avg": 0.23606143393887588,
+          "fr_avg": 0.22847078612663663,
+          "rl_avg": 0.22150003920624256,
+          "rr_avg": 0.2165544347603531,
+          "fl_max": 0.2768535017967224,
+          "fr_max": 0.2673739194869995,
+          "rl_max": 0.24825385212898254,
+          "rr_max": 0.24599388241767883
+        },
+        "front_rear_balance": {
+          "avg_front_compression": 0.23226611003275627,
+          "avg_rear_compression": 0.21902723698329785
+        }
+      },
+      "road_analysis": {
+        "banking": {
+          "avg_angle": 57.2396064042573,
+          "max_left_bank": 56.984278375661376,
+          "max_right_bank": 57.295134056317806
+        },
+        "elevation": {
+          "avg_gradient": 0.0007202250123824585,
+          "max_uphill": 0.08861371129751205,
+          "max_downhill": -0.09140373766422272
+        }
+      },
+      "tire_analysis": {
+        "temperatures": {
+          "fl_avg": 69.82900258831316,
+          "fr_avg": 63.62435576531698,
+          "rl_avg": 67.59166026329858,
+          "rr_avg": 65.85284833681943,
+          "fl_max": 88.37094116210938,
+          "fr_max": 69.50630187988281,
+          "rl_max": 85.27271270751953,
+          "rr_max": 138.38658142089844,
+          "fl_min": 67.36592102050781,
+          "fr_min": 62.67863845825195,
+          "rl_min": 66.98541259765625,
+          "rr_min": 62.8252067565918,
+          "temp_spread": 75.70794296264648
+        },
+        "slip_ratios": {
+          "fl_avg": 0.9841498061202566,
+          "fr_avg": 0.9750613477694109,
+          "rl_avg": 1.0236764933746696,
+          "rr_avg": 1.0209940781023126,
+          "fl_max": 1.0503991159546684,
+          "fr_max": 1.0484581860490056,
+          "rl_max": 1.1669485027470083,
+          "rr_max": 1.1669485027470083,
+          "front_slip_avg": 0.9796055769448337,
+          "rear_slip_avg": 1.022335285738491
+        },
+        "tire_work_distribution": {
+          "front_vs_rear_temp": 0.004424876756061735,
+          "left_vs_right_temp": 3.971729374737663
+        }
+      },
+      "engine_analysis": {
+        "power_delivery": {
+          "avg_rpm": 6531.071409103298,
+          "max_rpm": 8549.0,
+          "rpm_utilization": 0.7256746010114775,
+          "avg_gear": 3.043063505042246
+        },
+        "thermal_management": {
+          "avg_oil_temp": 110.0,
+          "max_oil_temp": 110.0,
+          "avg_water_temp": 85.0,
+          "max_water_temp": 85.0,
+          "avg_oil_pressure": 6.630264431165069
+        },
+        "forced_induction": {
+          "has_turbo": 0.0,
+          "avg_boost": 0.0,
+          "max_boost": 0.0
+        }
+      },
+      "transmission_analysis": {
+        "gear_ratios": {
+          "gear_1": 3.2900002002716064,
+          "gear_2": 2.1600000858306885,
+          "gear_3": 1.6100001335144043,
+          "gear_4": 1.2700001001358032,
+          "gear_5": 1.03000009059906,
+          "gear_6": 0.8200000524520874,
+          "gear_7": 0.0,
+          "gear_8": 0.0
+        },
+        "transmission_top_speed": 3.000000238418579,
+        "gear_usage": {
+          "gear_4": 26.17,
+          "gear_5": 4.28,
+          "gear_3": 39.14,
+          "gear_2": 30.42
+        }
+      },
+      "clutch_analysis": {
+        "avg_clutch_position": 0.044426274189152355,
+        "avg_clutch_engagement": 0.9555737258108477,
+        "clutch_events": 163
+      },
+      "phase_analysis": {
+        "braking_phase": {
+          "data_points": 586,
+          "avg_pitch": -0.0008887422079663031,
+          "avg_roll": 0.006301972122535939,
+          "avg_body_height": 0.08771327331204463,
+          "avg_speed": 134.93904187329395,
+          "suspension_compression": {
+            "fl": 0.2526733312793966,
+            "fr": 0.2450884528992119,
+            "rl": 0.2182280766323158,
+            "rr": 0.2122052191874273
+          },
+          "tire_temps": {
+            "fl": 68.26388980748304,
+            "fr": 63.330412731235754,
+            "rl": 67.22766503864588,
+            "rr": 63.44621549612833
+          },
+          "tire_slip_ratios": {
+            "fl": 0.8956365311097416,
+            "fr": 0.8820080830069179,
+            "rl": 0.9494318763037056,
+            "rr": 0.9460553148829245
+          },
+          "engine_metrics": {
+            "avg_rpm": 6109.373720136518,
+            "avg_throttle": 3.18744562671485,
+            "avg_brake": 88.43605701666333
+          }
+        },
+        "cornering_phase": {
+          "data_points": 1370,
+          "avg_pitch": -0.00028386011390001885,
+          "avg_roll": 0.015721047508537117,
+          "avg_body_height": 0.09411911999222136,
+          "avg_speed": 102.74030518858973,
+          "suspension_compression": {
+            "fl": 0.23843119222752368,
+            "fr": 0.2270531654466678,
+            "rl": 0.2223102873041682,
+            "rr": 0.21469526261526303
+          },
+          "tire_temps": {
+            "fl": 70.29062342400098,
+            "fr": 63.528720652448,
+            "rl": 67.29240039908973,
+            "rr": 63.89539067344944
+          },
+          "tire_slip_ratios": {
+            "fl": 0.9903435893189181,
+            "fr": 0.9773967922185037,
+            "rl": 1.0213959160603703,
+            "rr": 1.0169854427679768
+          },
+          "engine_metrics": {
+            "avg_rpm": 6163.405109489051,
+            "avg_throttle": 39.352798053527984,
+            "avg_brake": 7.5045083726921415
+          }
+        },
+        "acceleration_phase": {
+          "data_points": 1918,
+          "avg_pitch": -0.0051117213669242614,
+          "avg_roll": 0.008121838431697455,
+          "avg_body_height": 0.09685995245626249,
+          "avg_speed": 134.7206194228251,
+          "suspension_compression": {
+            "fl": 0.22536074511543677,
+            "fr": 0.2236611523953916,
+            "rl": 0.221600875615825,
+            "rr": 0.220912802595416
+          },
+          "tire_temps": {
+            "fl": 69.0308750578211,
+            "fr": 63.662046518017526,
+            "rl": 67.8236664701428,
+            "rr": 67.37139351201381
+          },
+          "tire_slip_ratios": {
+            "fl": 0.9991114870094693,
+            "fr": 0.9972613855190602,
+            "rl": 1.0532469893244158,
+            "rr": 1.052941074686747
+          },
+          "engine_metrics": {
+            "avg_rpm": 7114.108446298227,
+            "avg_throttle": 89.89265779304424,
+            "avg_brake": 1.0955038949886524
+          }
+        },
+        "high_speed_phase": {
+          "data_points": 2871,
+          "avg_pitch": -0.0028140325031077583,
+          "avg_roll": 0.007588822195616699,
+          "avg_body_height": 0.09433721853481772,
+          "avg_speed": 137.85379186887351,
+          "suspension_compression": {
+            "fl": 0.23515922521432076,
+            "fr": 0.22792875605856902,
+            "rl": 0.22199662513992008,
+            "rr": 0.21656661326255752
+          },
+          "tire_temps": {
+            "fl": 69.2007231783759,
+            "fr": 63.52518286151946,
+            "rl": 67.70802868903202,
+            "rr": 66.298204539587
+          },
+          "tire_slip_ratios": {
+            "fl": 0.9809308610849868,
+            "fr": 0.9729311805085289,
+            "rl": 1.0231947371464494,
+            "rr": 1.0217038999237584
+          },
+          "engine_metrics": {
+            "avg_rpm": 6945.016370602578,
+            "avg_throttle": 57.76630401376851,
+            "avg_brake": 17.498173076266383
+          }
+        }
+      },
+      "lap_number": 6,
+      "data_points_analyzed": 3669,
+      "data_points_total": 3669
+    },
+    {
+      "lap_summary": {
+        "total_data_points": 3596,
+        "lap_time": 59.976199,
+        "max_speed": 207.45101623535157,
+        "avg_speed": 124.85699265186196,
+        "max_rpm": 8740.0,
+        "avg_rpm": 6626.406006674082
+      },
+      "platform_dynamics": {
+        "avg_pitch": -0.002630788584423695,
+        "max_pitch_range": 0.0736694410443306,
+        "avg_roll": 0.00907875640223008,
+        "max_roll": 0.030719585716724396,
+        "pitch_stability": 0.01305605869376872,
+        "roll_stability": 0.010830399109162944
+      },
+      "suspension_behavior": {
+        "avg_body_height": 0.09401422813617613,
+        "min_body_height": 0.0684366226196289,
+        "body_height_variation": 0.005665166308371524,
+        "suspension_travel": {
+          "fl_avg": 0.2357395100257089,
+          "fr_avg": 0.2288942851822355,
+          "rl_avg": 0.2215359703087568,
+          "rr_avg": 0.21653406024890826,
+          "fl_max": 0.27738097310066223,
+          "fr_max": 0.268873393535614,
+          "rl_max": 0.2599380612373352,
+          "rr_max": 0.24531018733978271
+        },
+        "front_rear_balance": {
+          "avg_front_compression": 0.2323168976039722,
+          "avg_rear_compression": 0.2190350152788325
+        }
+      },
+      "road_analysis": {
+        "banking": {
+          "avg_angle": 57.24032773460059,
+          "max_left_bank": 56.99360158721208,
+          "max_right_bank": 57.29577267923355
+        },
+        "elevation": {
+          "avg_gradient": 0.0011630401096086084,
+          "max_uphill": 0.08835839480161667,
+          "max_downhill": -0.09137144684791565
+        }
+      },
+      "tire_analysis": {
+        "temperatures": {
+          "fl_avg": 70.66613948809292,
+          "fr_avg": 64.61278508688106,
+          "rl_avg": 67.97829024385955,
+          "rr_avg": 64.08280497902095,
+          "fl_max": 83.29205322265625,
+          "fr_max": 75.91050720214844,
+          "rl_max": 71.20164489746094,
+          "rr_max": 64.29432678222656,
+          "fl_min": 68.81136322021484,
+          "fr_min": 63.447425842285156,
+          "rl_min": 67.760498046875,
+          "rr_min": 63.88735580444336,
+          "temp_spread": 19.844627380371094
+        },
+        "slip_ratios": {
+          "fl_avg": 0.9852865556917033,
+          "fr_avg": 0.9763017500592807,
+          "rl_avg": 1.0232340582002508,
+          "rr_avg": 1.0212555856860548,
+          "fl_max": 1.0476697946588052,
+          "fr_max": 1.0352004038984792,
+          "rl_max": 1.2092926683513396,
+          "rr_max": 1.2092926683513396,
+          "front_slip_avg": 0.980794152875492,
+          "rear_slip_avg": 1.0222448219431528
+        },
+        "tire_work_distribution": {
+          "front_vs_rear_temp": 1.6089146760467372,
+          "left_vs_right_temp": 4.974419833025223
+        }
+      },
+      "engine_analysis": {
+        "power_delivery": {
+          "avg_rpm": 6626.406006674082,
+          "max_rpm": 8740.0,
+          "rpm_utilization": 0.736267334074898,
+          "avg_gear": 3.0611790878754173
+        },
+        "thermal_management": {
+          "avg_oil_temp": 110.0,
+          "max_oil_temp": 110.0,
+          "avg_water_temp": 85.0,
+          "max_water_temp": 85.0,
+          "avg_oil_pressure": 6.645794536035769
+        },
+        "forced_induction": {
+          "has_turbo": 0.0,
+          "avg_boost": 0.0,
+          "max_boost": 0.0
+        }
+      },
+      "transmission_analysis": {
+        "gear_ratios": {
+          "gear_1": 3.2900002002716064,
+          "gear_2": 2.1600000858306885,
+          "gear_3": 1.6100001335144043,
+          "gear_4": 1.2700001001358032,
+          "gear_5": 1.03000009059906,
+          "gear_6": 0.8200000524520874,
+          "gear_7": 0.0,
+          "gear_8": 0.0
+        },
+        "transmission_top_speed": 3.000000238418579,
+        "gear_usage": {
+          "gear_4": 26.72,
+          "gear_5": 4.31,
+          "gear_3": 39.74,
+          "gear_2": 29.23
+        }
+      },
+      "clutch_analysis": {
+        "avg_clutch_position": 0.04505005561735261,
+        "avg_clutch_engagement": 0.9549499443826474,
+        "clutch_events": 162
+      },
+      "phase_analysis": {
+        "braking_phase": {
+          "data_points": 579,
+          "avg_pitch": 0.001219402571477797,
+          "avg_roll": 0.007145789259178516,
+          "avg_body_height": 0.08773016270784105,
+          "avg_speed": 134.5298341227319,
+          "suspension_compression": {
+            "fl": 0.25085542025446683,
+            "fr": 0.24653616261914604,
+            "rl": 0.21709275464422756,
+            "rr": 0.2134887358119039
+          },
+          "tire_temps": {
+            "fl": 69.41920987723816,
+            "fr": 64.11013225364356,
+            "rl": 67.88943116446644,
+            "rr": 64.09798789806729
+          },
+          "tire_slip_ratios": {
+            "fl": 0.906623115754717,
+            "fr": 0.8987660063504377,
+            "rl": 0.9501140614014546,
+            "rr": 0.9500221894425386
+          },
+          "engine_metrics": {
+            "avg_rpm": 6100.402417962004,
+            "avg_throttle": 3.007213247993498,
+            "avg_brake": 85.7821124995767
+          }
+        },
+        "cornering_phase": {
+          "data_points": 1313,
+          "avg_pitch": 0.0013326943838885175,
+          "avg_roll": 0.015924025312781063,
+          "avg_body_height": 0.09405012995072748,
+          "avg_speed": 101.22621418124194,
+          "suspension_compression": {
+            "fl": 0.2376484371330206,
+            "fr": 0.2284435277913966,
+            "rl": 0.22145932329490906,
+            "rr": 0.2151805660648375
+          },
+          "tire_temps": {
+            "fl": 71.41419202538728,
+            "fr": 64.8025360020262,
+            "rl": 67.94362502087189,
+            "rr": 64.04618460661749
+          },
+          "tire_slip_ratios": {
+            "fl": 0.9869158033560086,
+            "fr": 0.9756576440228929,
+            "rl": 1.0210349915060861,
+            "rr": 1.0183674278593164
+          },
+          "engine_metrics": {
+            "avg_rpm": 6191.5955826351865,
+            "avg_throttle": 38.957334647491905,
+            "avg_brake": 8.316831683168317
+          }
+        },
+        "acceleration_phase": {
+          "data_points": 2045,
+          "avg_pitch": -0.0063933717543108405,
+          "avg_roll": 0.008519411482335886,
+          "avg_body_height": 0.09664741932325667,
+          "avg_speed": 132.5593060435176,
+          "suspension_compression": {
+            "fl": 0.22621362147383703,
+            "fr": 0.22414651975800765,
+            "rl": 0.22159642235428315,
+            "rr": 0.22036320885556834
+          },
+          "tire_temps": {
+            "fl": 70.60379674860201,
+            "fr": 64.62425007342127,
+            "rl": 68.0284337498448,
+            "rr": 64.08010665408557
+          },
+          "tire_slip_ratios": {
+            "fl": 0.9985041368864429,
+            "fr": 0.9951563226697258,
+            "rl": 1.0502955823625197,
+            "rr": 1.0502607995120539
+          },
+          "engine_metrics": {
+            "avg_rpm": 7132.148166259169,
+            "avg_throttle": 83.68627450980392,
+            "avg_brake": 0.9870080061364399
+          }
+        },
+        "high_speed_phase": {
+          "data_points": 2896,
+          "avg_pitch": -0.0032130346047005488,
+          "avg_roll": 0.007894248548555522,
+          "avg_body_height": 0.09432041680038963,
+          "avg_speed": 138.5029817886774,
+          "suspension_compression": {
+            "fl": 0.23476899635993478,
+            "fr": 0.22856283204846126,
+            "rl": 0.22157029298684708,
+            "rr": 0.21679420957022774
+          },
+          "tire_temps": {
+            "fl": 70.1990896588531,
+            "fr": 64.24697907194907,
+            "rl": 68.01860984517724,
+            "rr": 64.10029809119293
+          },
+          "tire_slip_ratios": {
+            "fl": 0.9830838126352424,
+            "fr": 0.9766153879762035,
+            "rl": 1.0226588943318744,
+            "rr": 1.0219833336006716
+          },
+          "engine_metrics": {
+            "avg_rpm": 7007.128453038674,
+            "avg_throttle": 55.96955909435598,
+            "avg_brake": 16.71825912685516
+          }
+        }
+      },
+      "lap_number": 7,
+      "data_points_analyzed": 3596,
+      "data_points_total": 3596
+    },
+    {
+      "lap_summary": {
+        "total_data_points": 3612,
+        "lap_time": 60.243896,
+        "max_speed": 206.99024963378906,
+        "avg_speed": 124.1435884196893,
+        "max_rpm": 8579.0,
+        "avg_rpm": 6556.905315614618
+      },
+      "platform_dynamics": {
+        "avg_pitch": -0.002706981016434519,
+        "max_pitch_range": 0.0806610994040966,
+        "avg_roll": 0.009025050364967644,
+        "max_roll": 0.030761927366256714,
+        "pitch_stability": 0.013592273837231746,
+        "roll_stability": 0.011003230563155927
+      },
+      "suspension_behavior": {
+        "avg_body_height": 0.09399922223450205,
+        "min_body_height": 0.06555843353271484,
+        "body_height_variation": 0.0059187172127736195,
+        "suspension_travel": {
+          "fl_avg": 0.23573788774848511,
+          "fr_avg": 0.22896827843580664,
+          "rl_avg": 0.2215122200243365,
+          "rr_avg": 0.21657447378715275,
+          "fl_max": 0.2805293798446655,
+          "fr_max": 0.26912572979927063,
+          "rl_max": 0.2548360824584961,
+          "rr_max": 0.2403634637594223
+        },
+        "front_rear_balance": {
+          "avg_front_compression": 0.23235308309214586,
+          "avg_rear_compression": 0.21904334690574462
+        }
+      },
+      "road_analysis": {
+        "banking": {
+          "avg_angle": 57.23752005976958,
+          "max_left_bank": 56.98356462063789,
+          "max_right_bank": 57.29570779241323
+        },
+        "elevation": {
+          "avg_gradient": 0.0011714055550632512,
+          "max_uphill": 0.08797208219766617,
+          "max_downhill": -0.09176334738731384
+        }
+      },
+      "tire_analysis": {
+        "temperatures": {
+          "fl_avg": 72.5336627601125,
+          "fr_avg": 65.68414730143837,
+          "rl_avg": 68.93109519510702,
+          "rr_avg": 65.19907606426928,
+          "fl_max": 96.29391479492188,
+          "fr_max": 79.8963851928711,
+          "rl_max": 87.91738891601562,
+          "rr_max": 100.51751708984375,
+          "fl_min": 70.23651123046875,
+          "fr_min": 64.29135131835938,
+          "rl_min": 68.4905014038086,
+          "rr_min": 64.00597381591797,
+          "temp_spread": 36.51154327392578
+        },
+        "slip_ratios": {
+          "fl_avg": 0.9854331572416147,
+          "fr_avg": 0.9764060942408126,
+          "rl_avg": 1.0221357988360888,
+          "rr_avg": 1.020139958704624,
+          "fl_max": 1.0503003264689796,
+          "fr_max": 1.0284210050922535,
+          "rl_max": 1.121394850381722,
+          "rr_max": 1.121394850381722,
+          "front_slip_avg": 0.9809196257412136,
+          "rear_slip_avg": 1.0211378787703564
+        },
+        "tire_work_distribution": {
+          "front_vs_rear_temp": 2.0438194010872905,
+          "left_vs_right_temp": 5.290767294755938
+        }
+      },
+      "engine_analysis": {
+        "power_delivery": {
+          "avg_rpm": 6556.905315614618,
+          "max_rpm": 8579.0,
+          "rpm_utilization": 0.7285450350682909,
+          "avg_gear": 3.070598006644518
+        },
+        "thermal_management": {
+          "avg_oil_temp": 110.0,
+          "max_oil_temp": 110.0,
+          "avg_water_temp": 85.0,
+          "max_water_temp": 85.0,
+          "avg_oil_pressure": 6.633601636717618
+        },
+        "forced_induction": {
+          "has_turbo": 0.0,
+          "avg_boost": 0.0,
+          "max_boost": 0.0
+        }
+      },
+      "transmission_analysis": {
+        "gear_ratios": {
+          "gear_1": 3.2900002002716064,
+          "gear_2": 2.1600000858306885,
+          "gear_3": 1.6100001335144043,
+          "gear_4": 1.2700001001358032,
+          "gear_5": 1.03000009059906,
+          "gear_6": 0.8200000524520874,
+          "gear_7": 0.0,
+          "gear_8": 0.0
+        },
+        "transmission_top_speed": 3.000000238418579,
+        "gear_usage": {
+          "gear_4": 29.01,
+          "gear_5": 4.37,
+          "gear_3": 35.91,
+          "gear_2": 30.7
+        }
+      },
+      "clutch_analysis": {
+        "avg_clutch_position": 0.04512735326688815,
+        "avg_clutch_engagement": 0.9548726467331119,
+        "clutch_events": 163
+      },
+      "phase_analysis": {
+        "braking_phase": {
+          "data_points": 545,
+          "avg_pitch": 0.0004011572146395204,
+          "avg_roll": 0.006635075801056425,
+          "avg_body_height": 0.08708526191361454,
+          "avg_speed": 136.7183936302815,
+          "suspension_compression": {
+            "fl": 0.25204981762334844,
+            "fr": 0.24769257304318454,
+            "rl": 0.21717413997431415,
+            "rr": 0.21346314729900534
+          },
+          "tire_temps": {
+            "fl": 70.60226079258351,
+            "fr": 64.88737545188414,
+            "rl": 68.64153947742707,
+            "rr": 64.4156118410443
+          },
+          "tire_slip_ratios": {
+            "fl": 0.899519862049782,
+            "fr": 0.8886125257861435,
+            "rl": 0.946953259837399,
+            "rr": 0.9459201802948497
+          },
+          "engine_metrics": {
+            "avg_rpm": 6178.22385321101,
+            "avg_throttle": 3.1948192120885057,
+            "avg_brake": 89.6312286382443
+          }
+        },
+        "cornering_phase": {
+          "data_points": 1379,
+          "avg_pitch": 0.0004935955725498146,
+          "avg_roll": 0.016132129150280016,
+          "avg_body_height": 0.09425309337162298,
+          "avg_speed": 98.7488764247659,
+          "suspension_compression": {
+            "fl": 0.23901028690172157,
+            "fr": 0.22660467537569776,
+            "rl": 0.22237210541941965,
+            "rr": 0.21409806150988966
+          },
+          "tire_temps": {
+            "fl": 74.74017332324608,
+            "fr": 65.65179111406023,
+            "rl": 69.0145343008726,
+            "rr": 64.40089088423343
+          },
+          "tire_slip_ratios": {
+            "fl": 0.9900889196706377,
+            "fr": 0.9737549488231378,
+            "rl": 1.021847749613632,
+            "rr": 1.0180618654256433
+          },
+          "engine_metrics": {
+            "avg_rpm": 6147.706308919507,
+            "avg_throttle": 37.6678183963941,
+            "avg_brake": 8.361273443387509
+          }
+        },
+        "acceleration_phase": {
+          "data_points": 1904,
+          "avg_pitch": -0.00520733516992443,
+          "avg_roll": 0.008450321683398704,
+          "avg_body_height": 0.09715516996734283,
+          "avg_speed": 135.27082185985662,
+          "suspension_compression": {
+            "fl": 0.22517293896682622,
+            "fr": 0.22347425988742284,
+            "rl": 0.22146981105427532,
+            "rr": 0.22048460640514098
+          },
+          "tire_temps": {
+            "fl": 71.84100963287995,
+            "fr": 65.29329206562844,
+            "rl": 69.14089108715538,
+            "rr": 65.69323438756606
+          },
+          "tire_slip_ratios": {
+            "fl": 0.9992276889912085,
+            "fr": 0.9960369332296661,
+            "rl": 1.050413170420746,
+            "rr": 1.05040175090518
+          },
+          "engine_metrics": {
+            "avg_rpm": 7145.798844537815,
+            "avg_throttle": 88.93001318174329,
+            "avg_brake": 1.1554621848739495
+          }
+        },
+        "high_speed_phase": {
+          "data_points": 2803,
+          "avg_pitch": -0.0029767398007167637,
+          "avg_roll": 0.007529603579381916,
+          "avg_body_height": 0.0943927360440083,
+          "avg_speed": 139.80258181977177,
+          "suspension_compression": {
+            "fl": 0.23448129025391923,
+            "fr": 0.22843082510187418,
+            "rl": 0.22154303353852645,
+            "rr": 0.21698725655744044
+          },
+          "tire_temps": {
+            "fl": 73.0055225956155,
+            "fr": 65.03487355140035,
+            "rl": 69.02919092086482,
+            "rr": 65.4512087454168
+          },
+          "tire_slip_ratios": {
+            "fl": 0.9810116091730424,
+            "fr": 0.9744846350099285,
+            "rl": 1.0219118520298682,
+            "rr": 1.0215347131311412
+          },
+          "engine_metrics": {
+            "avg_rpm": 6963.876560827684,
+            "avg_throttle": 58.2675424789966,
+            "avg_brake": 17.318699152868426
+          }
+        }
+      },
+      "lap_number": 8,
+      "data_points_analyzed": 3612,
+      "data_points_total": 3612
+    },
+    {
+      "lap_summary": {
+        "total_data_points": 3587,
+        "lap_time": 59.826044,
+        "max_speed": 208.18240356445312,
+        "avg_speed": 124.64707302181773,
+        "max_rpm": 8639.0,
+        "avg_rpm": 6601.022581544466
+      },
+      "platform_dynamics": {
+        "avg_pitch": -0.003230351363250634,
+        "max_pitch_range": 0.07770221680402756,
+        "avg_roll": 0.00887978013508018,
+        "max_roll": 0.03155495226383209,
+        "pitch_stability": 0.014110499694018702,
+        "roll_stability": 0.010716205875636714
+      },
+      "suspension_behavior": {
+        "avg_body_height": 0.09395961875133871,
+        "min_body_height": 0.06993770599365234,
+        "body_height_variation": 0.005662752659015896,
+        "suspension_travel": {
+          "fl_avg": 0.23592261925177685,
+          "fr_avg": 0.22861233649394755,
+          "rl_avg": 0.2218172167224541,
+          "rr_avg": 0.21655541448613744,
+          "fl_max": 0.27993103861808777,
+          "fr_max": 0.27052706480026245,
+          "rl_max": 0.24049516022205353,
+          "rr_max": 0.24111679196357727
+        },
+        "front_rear_balance": {
+          "avg_front_compression": 0.2322674778728622,
+          "avg_rear_compression": 0.21918631560429577
+        }
+      },
+      "road_analysis": {
+        "banking": {
+          "avg_angle": 57.23336917434733,
+          "max_left_bank": 56.99169596375227,
+          "max_right_bank": 57.29509307516813
+        },
+        "elevation": {
+          "avg_gradient": -0.0001717929217718014,
+          "max_uphill": 0.08652634918689728,
+          "max_downhill": -0.09272949397563934
+        }
+      },
+      "tire_analysis": {
+        "temperatures": {
+          "fl_avg": 72.46902282689321,
+          "fr_avg": 65.75674990209191,
+          "rl_avg": 69.38174911937176,
+          "rr_avg": 66.31172512193758,
+          "fl_max": 82.48698425292969,
+          "fr_max": 71.00923156738281,
+          "rl_max": 69.74663543701172,
+          "rr_max": 105.5051498413086,
+          "fl_min": 71.44112396240234,
+          "fr_min": 65.09269714355469,
+          "rl_min": 69.14933776855469,
+          "rr_min": 64.53366088867188,
+          "temp_spread": 40.97148895263672
+        },
+        "slip_ratios": {
+          "fl_avg": 0.9835164963274471,
+          "fr_avg": 0.9738196977019171,
+          "rl_avg": 1.022768854531322,
+          "rr_avg": 1.0206624965989715,
+          "fl_max": 1.0321555916209615,
+          "fr_max": 1.0352541927855985,
+          "rl_max": 1.1740293442876433,
+          "rr_max": 1.1740293442876433,
+          "front_slip_avg": 0.9786680970146822,
+          "rear_slip_avg": 1.0217156755651469
+        },
+        "tire_work_distribution": {
+          "front_vs_rear_temp": 1.2661492438379014,
+          "left_vs_right_temp": 4.891148461117723
+        }
+      },
+      "engine_analysis": {
+        "power_delivery": {
+          "avg_rpm": 6601.022581544466,
+          "max_rpm": 8639.0,
+          "rpm_utilization": 0.7334469535049407,
+          "avg_gear": 3.063005296905492
+        },
+        "thermal_management": {
+          "avg_oil_temp": 110.0,
+          "max_oil_temp": 110.0,
+          "avg_water_temp": 85.0,
+          "max_water_temp": 85.0,
+          "avg_oil_pressure": 6.645943881476993
+        },
+        "forced_induction": {
+          "has_turbo": 0.0,
+          "avg_boost": 0.0,
+          "max_boost": 0.0
+        }
+      },
+      "transmission_analysis": {
+        "gear_ratios": {
+          "gear_1": 3.2900002002716064,
+          "gear_2": 2.1600000858306885,
+          "gear_3": 1.6100001335144043,
+          "gear_4": 1.2700001001358032,
+          "gear_5": 1.03000009059906,
+          "gear_6": 0.8200000524520874,
+          "gear_7": 0.0,
+          "gear_8": 0.0
+        },
+        "transmission_top_speed": 3.000000238418579,
+        "gear_usage": {
+          "gear_4": 25.54,
+          "gear_5": 4.66,
+          "gear_3": 41.26,
+          "gear_2": 28.55
+        }
+      },
+      "clutch_analysis": {
+        "avg_clutch_position": 0.04516308893225537,
+        "avg_clutch_engagement": 0.9548369110677446,
+        "clutch_events": 162
+      },
+      "phase_analysis": {
+        "braking_phase": {
+          "data_points": 593,
+          "avg_pitch": -0.0009843605380755822,
+          "avg_roll": 0.006477843621575107,
+          "avg_body_height": 0.08684233871318438,
+          "avg_speed": 136.53962149917578,
+          "suspension_compression": {
+            "fl": 0.25382461988101723,
+            "fr": 0.2461834363199607,
+            "rl": 0.2188225447076167,
+            "rr": 0.21239701023994367
+          },
+          "tire_temps": {
+            "fl": 71.8815913980365,
+            "fr": 65.6025476825579,
+            "rl": 69.34362831566024,
+            "rr": 65.03155799338226
+          },
+          "tire_slip_ratios": {
+            "fl": 0.8942879943448324,
+            "fr": 0.8782098550827728,
+            "rl": 0.947361040992186,
+            "rr": 0.9424423764674159
+          },
+          "engine_metrics": {
+            "avg_rpm": 6163.02192242833,
+            "avg_throttle": 3.342261019078795,
+            "avg_brake": 89.42499090698675
+          }
+        },
+        "cornering_phase": {
+          "data_points": 1334,
+          "avg_pitch": -0.0006806231102092133,
+          "avg_roll": 0.015986826247779997,
+          "avg_body_height": 0.0942665519921676,
+          "avg_speed": 103.9220107952158,
+          "suspension_compression": {
+            "fl": 0.23806271044121333,
+            "fr": 0.2265011095281305,
+            "rl": 0.22252561528419984,
+            "rr": 0.21481519823578343
+          },
+          "tire_temps": {
+            "fl": 72.50597312389642,
+            "fr": 65.75068202440528,
+            "rl": 69.3617287482815,
+            "rr": 65.42223705308906
+          },
+          "tire_slip_ratios": {
+            "fl": 0.9911998050709687,
+            "fr": 0.9792032531892605,
+            "rl": 1.0222587664390579,
+            "rr": 1.020403674420968
+          },
+          "engine_metrics": {
+            "avg_rpm": 6202.472263868066,
+            "avg_throttle": 41.67475085986419,
+            "avg_brake": 7.507128788546902
+          }
+        },
+        "acceleration_phase": {
+          "data_points": 2000,
+          "avg_pitch": -0.005855750450486084,
+          "avg_roll": 0.008550054086954332,
+          "avg_body_height": 0.09675632739067078,
+          "avg_speed": 135.71290860328673,
+          "suspension_compression": {
+            "fl": 0.22593675483763218,
+            "fr": 0.22370242914557456,
+            "rl": 0.2220062474384904,
+            "rr": 0.22028788116574288
+          },
+          "tire_temps": {
+            "fl": 72.31564632415771,
+            "fr": 65.7345909614563,
+            "rl": 69.4084241065979,
+            "rr": 67.10826860046387
+          },
+          "tire_slip_ratios": {
+            "fl": 0.998967548778139,
+            "fr": 0.9959900198577745,
+            "rl": 1.0505926112200903,
+            "rr": 1.0505057679041396
+          },
+          "engine_metrics": {
+            "avg_rpm": 7142.316,
+            "avg_throttle": 87.79490196078432,
+            "avg_brake": 1.2080392156862745
+          }
+        },
+        "high_speed_phase": {
+          "data_points": 2836,
+          "avg_pitch": -0.003182630750199347,
+          "avg_roll": 0.007856854840006857,
+          "avg_body_height": 0.09439816860789473,
+          "avg_speed": 139.31566886094797,
+          "suspension_compression": {
+            "fl": 0.23448226253051516,
+            "fr": 0.22828604855767762,
+            "rl": 0.22165948857142156,
+            "rr": 0.21700774380682386
+          },
+          "tire_temps": {
+            "fl": 72.21282298003332,
+            "fr": 65.68183614841134,
+            "rl": 69.40572237195013,
+            "rr": 66.68388577610548
+          },
+          "tire_slip_ratios": {
+            "fl": 0.9796358510281311,
+            "fr": 0.9722207677806254,
+            "rl": 1.0226693568942997,
+            "rr": 1.021274423188023
+          },
+          "engine_metrics": {
+            "avg_rpm": 6996.290550070522,
+            "avg_throttle": 59.55336154207804,
+            "avg_brake": 18.337343399983407
+          }
+        }
+      },
+      "lap_number": 9,
+      "data_points_analyzed": 3587,
+      "data_points_total": 3587
+    },
+    {
+      "lap_summary": {
+        "total_data_points": 3596,
+        "lap_time": 59.977097,
+        "max_speed": 207.69724731445314,
+        "avg_speed": 124.62783557565115,
+        "max_rpm": 8786.0,
+        "avg_rpm": 6587.552280311457
+      },
+      "platform_dynamics": {
+        "avg_pitch": -0.0032414210601100515,
+        "max_pitch_range": 0.0785112977027893,
+        "avg_roll": 0.00877096436291224,
+        "max_roll": 0.03281932324171066,
+        "pitch_stability": 0.014283070095225685,
+        "roll_stability": 0.010486503157174967
+      },
+      "suspension_behavior": {
+        "avg_body_height": 0.09382751080165053,
+        "min_body_height": 0.06577873229980469,
+        "body_height_variation": 0.005738899797472717,
+        "suspension_travel": {
+          "fl_avg": 0.2360329251566506,
+          "fr_avg": 0.22899810348257207,
+          "rl_avg": 0.221698940890086,
+          "rr_avg": 0.21664936609723676,
+          "fl_max": 0.28000131249427795,
+          "fr_max": 0.2725730836391449,
+          "rl_max": 0.2549211382865906,
+          "rr_max": 0.23769676685333252
+        },
+        "front_rear_balance": {
+          "avg_front_compression": 0.23251551431961134,
+          "avg_rear_compression": 0.21917415349366137
+        }
+      },
+      "road_analysis": {
+        "banking": {
+          "avg_angle": 57.234366974527354,
+          "max_left_bank": 56.9915456995368,
+          "max_right_bank": 57.2958
+        },
+        "elevation": {
+          "avg_gradient": -0.00024566559471262236,
+          "max_uphill": 0.08611645549535751,
+          "max_downhill": -0.09282152354717255
+        }
+      },
+      "tire_analysis": {
+        "temperatures": {
+          "fl_avg": 73.33761006653376,
+          "fr_avg": 66.54313585622955,
+          "rl_avg": 69.690662396763,
+          "rr_avg": 65.31390046914241,
+          "fl_max": 83.88758087158203,
+          "fr_max": 78.49281311035156,
+          "rl_max": 72.72078704833984,
+          "rr_max": 65.44076538085938,
+          "fl_min": 72.0712890625,
+          "fr_min": 65.48444366455078,
+          "rl_min": 69.4587631225586,
+          "rr_min": 65.14447784423828,
+          "temp_spread": 18.74310302734375
+        },
+        "slip_ratios": {
+          "fl_avg": 0.9836393628132495,
+          "fr_avg": 0.9753006065836147,
+          "rl_avg": 1.0229841820892434,
+          "rr_avg": 1.0212599981544808,
+          "fl_max": 1.0365829107116407,
+          "fr_max": 1.033680160995853,
+          "rl_max": 1.2547448030222392,
+          "rr_max": 1.2547448030222392,
+          "front_slip_avg": 0.979469984698432,
+          "rear_slip_avg": 1.022122090121862
+        },
+        "tire_work_distribution": {
+          "front_vs_rear_temp": 2.4380915284289415,
+          "left_vs_right_temp": 5.585618068962404
+        }
+      },
+      "engine_analysis": {
+        "power_delivery": {
+          "avg_rpm": 6587.552280311457,
+          "max_rpm": 8786.0,
+          "rpm_utilization": 0.7319502533679397,
+          "avg_gear": 3.0734149054505004
+        },
+        "thermal_management": {
+          "avg_oil_temp": 110.0,
+          "max_oil_temp": 110.0,
+          "avg_water_temp": 85.0,
+          "max_water_temp": 85.0,
+          "avg_oil_pressure": 6.641730358125901
+        },
+        "forced_induction": {
+          "has_turbo": 0.0,
+          "avg_boost": 0.0,
+          "max_boost": 0.0
+        }
+      },
+      "transmission_analysis": {
+        "gear_ratios": {
+          "gear_1": 3.2900002002716064,
+          "gear_2": 2.1600000858306885,
+          "gear_3": 1.6100001335144043,
+          "gear_4": 1.2700001001358032,
+          "gear_5": 1.03000009059906,
+          "gear_6": 0.8200000524520874,
+          "gear_7": 0.0,
+          "gear_8": 0.0
+        },
+        "transmission_top_speed": 3.000000238418579,
+        "gear_usage": {
+          "gear_4": 26.14,
+          "gear_5": 4.64,
+          "gear_3": 41.13,
+          "gear_2": 28.09
+        }
+      },
+      "clutch_analysis": {
+        "avg_clutch_position": 0.046162402669632924,
+        "avg_clutch_engagement": 0.9538375973303671,
+        "clutch_events": 166
+      },
+      "phase_analysis": {
+        "braking_phase": {
+          "data_points": 570,
+          "avg_pitch": 0.001887230415064678,
+          "avg_roll": 0.00757733289093155,
+          "avg_body_height": 0.08670996218396906,
+          "avg_speed": 134.04507425007068,
+          "suspension_compression": {
+            "fl": 0.25184519113155834,
+            "fr": 0.24797256233399376,
+            "rl": 0.2174080841373979,
+            "rr": 0.21428170977977284
+          },
+          "tire_temps": {
+            "fl": 72.44997249402498,
+            "fr": 65.97410694590786,
+            "rl": 69.64562011183354,
+            "rr": 65.34134083798057
+          },
+          "tire_slip_ratios": {
+            "fl": 0.8927803659746872,
+            "fr": 0.8856683259150574,
+            "rl": 0.9467661117033673,
+            "rr": 0.946022503298665
+          },
+          "engine_metrics": {
+            "avg_rpm": 6094.254385964912,
+            "avg_throttle": 3.3739250085999317,
+            "avg_brake": 87.88235294117646
+          }
+        },
+        "cornering_phase": {
+          "data_points": 1325,
+          "avg_pitch": -0.0011218217053046485,
+          "avg_roll": 0.015548013625842221,
+          "avg_body_height": 0.09429670369850014,
+          "avg_speed": 102.03334050362066,
+          "suspension_compression": {
+            "fl": 0.23857478332969378,
+            "fr": 0.22608249774519001,
+            "rl": 0.22262017385014948,
+            "rr": 0.2145162723649223
+          },
+          "tire_temps": {
+            "fl": 74.09050967810289,
+            "fr": 66.45087610784567,
+            "rl": 69.70069615777933,
+            "rr": 65.28279266933225
+          },
+          "tire_slip_ratios": {
+            "fl": 0.9864820148119876,
+            "fr": 0.9713786871904604,
+            "rl": 1.023242528021591,
+            "rr": 1.0199433228780441
+          },
+          "engine_metrics": {
+            "avg_rpm": 6246.017358490566,
+            "avg_throttle": 42.6267110617832,
+            "avg_brake": 9.856011838697743
+          }
+        },
+        "acceleration_phase": {
+          "data_points": 1958,
+          "avg_pitch": -0.0065531384798611795,
+          "avg_roll": 0.008587304031624068,
+          "avg_body_height": 0.09673408812351442,
+          "avg_speed": 132.7831168497181,
+          "suspension_compression": {
+            "fl": 0.22588763443850157,
+            "fr": 0.22388276359612413,
+            "rl": 0.22191840997755344,
+            "rr": 0.22036713013944878
+          },
+          "tire_temps": {
+            "fl": 73.11935616124029,
+            "fr": 66.44550372192882,
+            "rl": 69.71292510534332,
+            "rr": 65.31117637797931
+          },
+          "tire_slip_ratios": {
+            "fl": 0.9988338724610952,
+            "fr": 0.9955245117874469,
+            "rl": 1.0520530224660685,
+            "rr": 1.0520805243486528
+          },
+          "engine_metrics": {
+            "avg_rpm": 7070.2042900919305,
+            "avg_throttle": 87.28614632778545,
+            "avg_brake": 1.1219932303871498
+          }
+        },
+        "high_speed_phase": {
+          "data_points": 2882,
+          "avg_pitch": -0.0032568149693712745,
+          "avg_roll": 0.007927489379128586,
+          "avg_body_height": 0.09422541479531632,
+          "avg_speed": 138.29787518079706,
+          "suspension_compression": {
+            "fl": 0.23482895408815846,
+            "fr": 0.22865537397878855,
+            "rl": 0.2216131206573421,
+            "rr": 0.21698147963828135
+          },
+          "tire_temps": {
+            "fl": 73.11704686182725,
+            "fr": 66.03452647551326,
+            "rl": 69.71402512020241,
+            "rr": 65.32640825386763
+          },
+          "tire_slip_ratios": {
+            "fl": 0.9805910111914037,
+            "fr": 0.974391326774194,
+            "rl": 1.0226768006063816,
+            "rr": 1.021992292680627
+          },
+          "engine_metrics": {
+            "avg_rpm": 6950.068355308813,
+            "avg_throttle": 57.1684968227402,
+            "avg_brake": 17.181151433508866
+          }
+        }
+      },
+      "lap_number": 10,
+      "data_points_analyzed": 3596,
+      "data_points_total": 3596
+    }
+  ],
+  "data_quality": {
+    "total_rows_read": 38137,
+    "valid_rows_analyzed": 36969,
+    "filtered_off_track": 0,
+    "filtered_loading": 0,
+    "filtered_paused": 1022,
+    "filtered_invalid_range": 146,
+    "filtered_nan_inf": 0,
+    "data_quality_percentage": 96.94
+  }
+}

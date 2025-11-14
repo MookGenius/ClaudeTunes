@@ -128,7 +128,21 @@ class ClaudeTunesCLI:
 
         # Load telemetry JSON
         self.telemetry = self._parse_telemetry(telemetry_path)
-        print(f"  ✓ Telemetry loaded: {len(self.telemetry.get('suspension_travel', {}))} data points")
+
+        # Count data points from either format
+        data_point_count = 0
+        if 'suspension_travel' in self.telemetry:
+            # Format 1: Direct suspension_travel arrays
+            data_point_count = len(self.telemetry.get('suspension_travel', {}))
+        elif 'individual_laps' in self.telemetry:
+            # Format 2: gt7_2r.py analyzer format
+            laps = self.telemetry.get('individual_laps', [])
+            if laps and len(laps) > 0 and 'lap_summary' in laps[0]:
+                data_point_count = laps[0]['lap_summary'].get('total_data_points', len(laps))
+            else:
+                data_point_count = len(laps)
+
+        print(f"  ✓ Telemetry loaded: {data_point_count} data points")
 
         # Analyze suspension travel patterns
         self._analyze_suspension()
@@ -803,13 +817,19 @@ class ClaudeTunesCLI:
         return bias_map.get(dt, {'front': 0.2, 'rear': 0.0})
 
     def _get_power_adder(self):
-        """Calculate power platform frequency adder"""
+        """Calculate power platform frequency adder per YAML protocol"""
         hp = self.car_data.get('hp', 400)
 
-        base_mult = math.sqrt(hp / 400)
-        adder = (base_mult - 1.0) * 0.5  # Scale to reasonable range
+        # Get base frequency (already calculated in phase B)
+        # For power platform, we use a reference base of 2.85 Hz (Racing Hard baseline)
+        base_freq = self._get_base_frequency()
 
-        # High power brackets
+        # YAML formula: Base × sqrt(HP / 400)
+        # This gives the total frequency WITH power, so we need: (Base × sqrt(HP/400)) - Base
+        power_multiplier = math.sqrt(hp / 400)
+        adder = base_freq * (power_multiplier - 1.0)
+
+        # High power brackets (YAML lines 104-107)
         if hp > 850:
             adder += 0.3
         elif hp > 700:
