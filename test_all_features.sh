@@ -6,27 +6,25 @@ echo "  ClaudeTunes CLI v8.5.3b - Feature Testing Suite"
 echo "════════════════════════════════════════════════════════════"
 echo ""
 
-cd "/Users/mookbookairm1/Desktop/CT Python Project"
-
 # Test 1: Balanced Setup (Default)
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo "TEST 1: Balanced Setup (Default Track Type)"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-python3 claudetunes_cli.py car_data_with_ranges_MASTER.txt sample_telemetry.json -o test_balanced.txt 2>&1 | grep -E "(CG height|Target:|Achievable:|ARB|Dampers|Diff:)"
+python3 claudetunes_cli.py templates/car_data_with_ranges_MASTER.txt templates/sample_telemetry.json -o test_balanced.txt 2>&1 | grep -E "(CG height|Target:|Achievable:|ARB|Dampers|Diff:)"
 echo ""
 
 # Test 2: High-Speed Track
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo "TEST 2: High-Speed Track Optimization"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-python3 claudetunes_cli.py car_data_with_ranges_MASTER.txt sample_telemetry.json -t high_speed -o test_highspeed.txt 2>&1 | grep -E "(CG height|Target:|Achievable:|ARB|Dampers|Diff:)"
+python3 claudetunes_cli.py templates/car_data_with_ranges_MASTER.txt templates/sample_telemetry.json -t high_speed -o test_highspeed.txt 2>&1 | grep -E "(CG height|Target:|Achievable:|ARB|Dampers|Diff:)"
 echo ""
 
 # Test 3: Technical Track
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo "TEST 3: Technical Track Optimization"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-python3 claudetunes_cli.py car_data_with_ranges_MASTER.txt sample_telemetry.json -t technical -o test_technical.txt 2>&1 | grep -E "(CG height|Target:|Achievable:|ARB|Dampers|Diff:)"
+python3 claudetunes_cli.py templates/car_data_with_ranges_MASTER.txt templates/sample_telemetry.json -t technical -o test_technical.txt 2>&1 | grep -E "(CG height|Target:|Achievable:|ARB|Dampers|Diff:)"
 echo ""
 
 # Test 4: Extract and compare setup parameters

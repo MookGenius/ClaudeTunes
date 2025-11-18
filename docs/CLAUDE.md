@@ -10,6 +10,58 @@ Convert GT7 telemetry data → Physics-based analysis → Optimized suspension s
 ### Version
 Current: **v8.5.3b** (complete YAML protocol alignment with all subsystems integrated)
 
+## Modes of Operation
+
+The YAML protocol defines **three operating modes** that determine how ClaudeTunes should be used:
+
+### 🔧 Tool Mode
+**When to use:** Running the actual ClaudeTunes setup generator
+
+**Triggers:**
+- User says: "Analyze my telemetry", "Run ClaudeTunes", "Give me setup recommendation"
+- User provides telemetry + car_data files
+- User explicitly requests a setup sheet
+
+**Behavior:** Execute the full Phase A→B→C→D workflow and generate GT7 setup sheets
+
+**Example:**
+```bash
+python3 claudetunes_cli.py car_data.txt telemetry.json -t high_speed
+```
+
+### 💬 Conversation Mode
+**When to use:** General discussions about automotive physics, GT7 strategy, tuning concepts
+
+**Triggers:**
+- Questions about suspension theory
+- GT7 gameplay tips
+- Physics explanations
+- Setup interpretation questions
+
+**Behavior:** Discuss concepts without running the tool. Explain principles from the YAML protocol.
+
+**Example Questions:**
+- "Why does drivetrain bias matter for suspension frequency?"
+- "How does GT7's aero model differ from real-world?"
+- "What's the best tire compound for my situation?"
+
+### 🔬 Development Mode
+**When to use:** Modifying the YAML protocol itself or enhancing ClaudeTunes features
+
+**Triggers:**
+- Protocol feedback or refinement requests
+- Feature enhancement discussions
+- Physics methodology improvements
+- Code development and debugging
+
+**Behavior:** Help develop and refine the ClaudeTunes system, update YAML protocol, modify Python code.
+
+**Example Activities:**
+- Adding new features to the YAML protocol
+- Debugging physics calculations
+- Enhancing the 4-phase workflow
+- Updating reference tables
+
 ## Repository Structure
 
 ```
@@ -199,6 +251,8 @@ The `ClaudeTunes v8.5.3b.yaml` file is the **single source of truth** for all ph
 ```yaml
 claudetunes:
   version: "8.5.3a-lite-hybrid"
+  purpose:              # Protocol purpose and scope
+  modes:                # Tool/Conversation/Development mode triggers
   gt7_physics_model:    # What to trust vs calibrate
   workflow:             # Phase definitions
 
@@ -227,10 +281,16 @@ tuning_subsystems:      # Phase D calculations
   differential:
   ride_height:
 
+safety_constraints:     # Critical rules (rake, stability, compliance)
+quality_gates:          # Format/physics/technical validation
+phase_D:               # Output formatting and iteration rules
+
 reference_tables:       # Quick lookup data
   gt7_downforce_database:
   differential_baselines:
   performance_expectations:
+
+version_context:        # v8.5.3a changes and rationale
 ```
 
 ### YAML Usage in Code
@@ -245,6 +305,111 @@ hz = tire_data['hz']  # 2.85 Hz for Racing Hard
 - **Trust Real-World Physics**: Suspension frequency, weight transfer, CG dynamics
 - **GT7-Calibrate**: Aero effectiveness, platform effects, sensitivity
 - **Reverse-Engineer**: Spring rate ↔ frequency, damper % ↔ force curves
+
+## Quality Gates and Safety Constraints
+
+The YAML protocol defines strict **quality gates** that every generated setup must pass. These are non-negotiable validation rules.
+
+### Format Quality Gates (YAML: quality_gates.format)
+Every setup output must:
+- ✅ Use markdown code block formatting
+- ✅ Use GT7 terminology and exact menu structure
+- ✅ Right-align all numeric values
+- ✅ Place tire section at top
+- ✅ Include physics summary at bottom
+- ✅ Use ▼ for toe out, ▲ for toe in
+- ✅ Never rename GT7 menu items
+
+### Physics Quality Gates (YAML: quality_gates.physics)
+Every setup must satisfy:
+- ✅ **No unjustified negative rake** (front > rear is invalid)
+- ✅ **Correct drivetrain bias applied** (FF/FR/MR/RR/AWD-specific)
+- ✅ **CG effects applied** where applicable
+- ✅ **All values within car_data ranges** (spring/damper/ARB limits)
+- ✅ **Aero frequency ≤ 0.5 Hz** (GT7 calibration limit)
+- ✅ **Stability index in safe band** (-0.90 to -0.40)
+
+### Technical Quality Gates (YAML: quality_gates.technical)
+All calculations must meet:
+- ✅ **Accurate frequency calculations** per tire compound
+- ✅ **Damping ratios 0.50-0.85** (compression:rebound)
+- ✅ **ARB consistent with frequency philosophy**
+- ✅ **Differential matches drivetrain type**
+- ✅ **Power platform separated from aero** (independent calculations)
+
+### Safety Constraints (YAML: safety_constraints)
+
+**Critical Rules - NEVER VIOLATE:**
+
+```python
+# Rake Rule (YAML line 259)
+RAKE_RULE = "Front ≤ Rear (positive rake always)"
+
+# Stability Range (YAML line 260)
+STABILITY_SAFE = (-0.90, -0.40)  # Front-biased safe window
+
+# Danger Flags (YAML lines 261-263)
+DANGER_FLAGS = {
+    'oversteer': 'stability > 0.00',      # Snap oversteer risk
+    'extreme_understeer': 'stability < -1.00'  # Unmanageable push
+}
+
+# Compliance (YAML line 264)
+RANGE_COMPLIANCE = "All values within car_data ranges"
+
+# Telemetry Match (YAML line 265)
+VALIDATION = "Setup must match observed balance + temps"
+```
+
+**What happens when violated:**
+- **Negative rake**: GT7 handling instability, potential setup rejection
+- **Stability out of range**: 2-5 second lap time penalty
+- **Values out of range**: GT7 menu won't accept the values
+- **Wrong drivetrain bias**: Proven 2-5s per lap penalty in testing
+
+## Version Context
+
+Understanding what changed between versions helps maintain consistency and avoid regressions.
+
+### v8.5.3a Changes (YAML: version_context.v8_5_3a_changes)
+
+The protocol documents these major changes from earlier versions:
+
+1. **Aero Frequency Reduction** (75% decrease)
+   - **Before:** +0.8-1.5 Hz aero adders
+   - **After:** +0.2-0.5 Hz max
+   - **Reason:** GT7 aero is ~10% real-world effectiveness
+
+2. **Power Platform Control Separated**
+   - **Before:** Power effects combined with aero
+   - **After:** Independent high-power adders (Phase B.power_platform_control)
+   - **Reason:** Torque delivery platform ≠ aerodynamic platform
+
+3. **GT7 Downforce Database Added**
+   - **New:** Complete reference by car class (Formula, GR2, GR3, GR4, Street)
+   - **Purpose:** Quick lookup for DF levels and expected GT7 impact
+
+4. **Ride Height Priority Reordered**
+   - **Before:** Equal weighting of physics/mechanical/aero
+   - **After:** CG/geometry 80%, mechanical 15%, aero 5%
+   - **Reason:** Geometric benefits >> aero in GT7
+
+5. **Aero Balance Simplified**
+   - **Before:** Complex aero balance calculations
+   - **After:** Use ~40% front convention, minor adjustments only
+   - **Reason:** Minimal GT7 aero impact means less tuning needed
+
+### Rationale (YAML line 452)
+> "GT7 aero deliberately nerfed (~10% real-world effectiveness). Occam's validation: 1300 lbs DF = 0.115s vs 3-5s real-world."
+
+### Philosophy (YAML line 453)
+> "Mechanical grip optimization >> Aerodynamic tuning in GT7"
+
+### When Developing
+- **Always check version_context** before modifying aero-related code
+- **Preserve the 10% calibration** (don't revert to real-world values)
+- **Keep power platform independent** from aero calculations
+- **Prioritize mechanical grip** over aero in all decisions
 
 ## Common Development Tasks
 
@@ -530,11 +695,30 @@ python3 claudetunes_cli.py car_data.txt telemetry.json -s sessions/my_session
 - **CG Improvement**: 5-8% per 25mm reduction
 - **Track-Type Optimization**: 0.2-0.5s track-specific
 
-### Three-Session Convergence
-1. **Session 1 (Physics Baseline)**: 1.0-3.0s improvement
-2. **Session 2 (Driver Refinement)**: 0.2-0.8s additional
-3. **Session 3 (System Optimization)**: 0.1-0.3s additional
+### Three-Session Convergence (YAML: iteration)
+
+The YAML protocol defines a systematic iteration workflow:
+
+**Workflow (YAML line 340):**
+```
+v1.0 → v2.0: Adjust highest-impact constrained parameter
+Stop when: <0.1s gain OR stability confirmed in safe band
+```
+
+**Versioning Rule (YAML line 342):**
+- Generate NEW complete setup sheet with version incremented
+- Never modify existing setup sheets (preserve v1.0 as baseline)
+
+**Expected Pattern (YAML lines 344-347):**
+1. **Session 1 (Physics Baseline 80-90%)**: 1.0-3.0s improvement
+2. **Session 2 (Driver Refinement 95-98%)**: 0.2-0.8s additional
+3. **Session 3 (System Optimization 99%+)**: 0.1-0.3s additional
 4. **Total**: 1.5-4.0s across all sessions
+
+**When to Stop:**
+- Gain drops below 0.1s per iteration
+- Stability index confirmed in safe band (-0.90 to -0.40)
+- Driver reports setup feels balanced and predictable
 
 ## Troubleshooting Guide
 
@@ -585,14 +769,30 @@ python3 claudetunes_cli.py car_data.txt telemetry.json \
 5. Compare against YAML protocol expected behavior
 
 ### Code Review Checklist
+
+**Quality Gates (YAML: quality_gates):**
+- [ ] Format: Markdown blocks, GT7 terminology, right-aligned values
+- [ ] Physics: Rake rule, drivetrain bias, CG effects, stability in safe band
+- [ ] Technical: Frequency accuracy, damping ratios, power/aero separation
+
+**Safety Constraints (YAML: safety_constraints):**
+- [ ] Rake rule enforced (Front ≤ Rear)
+- [ ] Stability index in safe range (-0.90 to -0.40)
+- [ ] No danger flags triggered (oversteer/extreme understeer)
+- [ ] All values within car_data ranges
+
+**Code Quality:**
 - [ ] YAML protocol alignment maintained
-- [ ] Safety constraints enforced (rake, stability)
-- [ ] Units documented in comments
+- [ ] Units documented in comments (Hz, mm, degrees, %)
 - [ ] Existing naming conventions followed
 - [ ] Phase A/B/C/D separation preserved
-- [ ] GT7-specific quirks respected
+- [ ] YAML line references in comments
+- [ ] GT7-specific quirks respected (10% aero, etc.)
+
+**Testing & Documentation:**
 - [ ] Test cases updated if needed
 - [ ] Documentation updated if user-facing
+- [ ] Version context respected (no aero regression)
 
 ## Quick Reference
 
@@ -648,7 +848,20 @@ Max: +3 levels, Recovery: 0.15 Hz per level
 **Version**: v8.5.3b
 **Last Updated**: 2025-11-13
 **Protocol Coverage**: 100% (All phases A/B/C/D implemented)
+**YAML Alignment**: Complete (modes, quality_gates, version_context documented)
 
-For user documentation, see [README.md](README.md)
-For recent changes, see [ENHANCEMENTS.md](ENHANCEMENTS.md)
-For physics methodology, see [ClaudeTunes v8.5.3b.yaml](ClaudeTunes%20v8.5.3b.yaml)
+## Related Documentation
+
+- **User Guide**: [README.md](README.md) - End-user documentation
+- **Changelog**: [ENHANCEMENTS.md](ENHANCEMENTS.md) - v8.5.3b feature additions
+- **Physics Protocol**: [ClaudeTunes v8.5.3b.yaml](ClaudeTunes%20v8.5.3b.yaml) - Complete methodology reference
+- **This Guide**: CLAUDE.md - AI assistant development guide
+
+## Documentation Hierarchy
+
+```
+README.md           → User-facing: How to use ClaudeTunes
+ENHANCEMENTS.md     → User-facing: What's new in v8.5.3b
+CLAUDE.md (this)    → Developer-facing: How to develop ClaudeTunes
+YAML Protocol       → Reference: Single source of truth for all calculations
+```
