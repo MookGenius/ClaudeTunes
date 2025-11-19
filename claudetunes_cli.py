@@ -207,8 +207,27 @@ class ClaudeTunesCLI:
                 i += 2
             elif line == "DIFFERENTIAL GEAR SETTINGS":
                 data['ranges']['diff'] = {'min': 5, 'max': 60}
-                data['torque_split'] = lines[i + 2] if i + 2 < len(lines) else "0:100"
-                i += 3
+                # Parse front and rear differential current values
+                # Format: "Front: 0/0/0 (range: 5 to 60 for all values)"
+                # Format: "Rear: 10/20/30 (range: 5 to 60 for all values)"
+                # Note: 0/0/0 means fully open diff (minimum locking), NOT "no diff"
+                # Only absence of "Front:" line means no front differential
+                if i + 1 < len(lines):
+                    front_line = lines[i + 1]
+                    if "Front:" in front_line:
+                        # Has a front differential (even if values are 0/0/0)
+                        data['has_front_diff'] = True
+                    else:
+                        data['has_front_diff'] = False
+                if i + 2 < len(lines):
+                    rear_line = lines[i + 2]
+                # Parse torque split
+                if i + 4 < len(lines) and "TORQUE SPLIT" in lines[i + 4]:
+                    data['torque_split'] = lines[i + 5] if i + 5 < len(lines) else "0:100"
+                    i += 6
+                else:
+                    data['torque_split'] = "0:100"
+                    i += 3
             elif line == "AERODYNAMICS":
                 if i + 2 < len(lines):
                     front_line = lines[i + 2]
@@ -829,24 +848,32 @@ class ClaudeTunesCLI:
         return bias_map.get(dt, {'front': 0.2, 'rear': 0.0})
 
     def _get_power_adder(self):
-        """Calculate power platform frequency adder per YAML protocol"""
+        """Calculate power platform frequency adder using power-to-weight ratio"""
         hp = self.car_data.get('hp', 400)
+        weight_lbs = self.car_data.get('weight', 3000)
 
-        # Get base frequency (already calculated in phase B)
-        # For power platform, we use a reference base of 2.85 Hz (Racing Hard baseline)
+        # Get base frequency
         base_freq = self._get_base_frequency()
 
-        # YAML formula: Base × sqrt(HP / 400)
-        # This gives the total frequency WITH power, so we need: (Base × sqrt(HP/400)) - Base
-        power_multiplier = math.sqrt(hp / 400)
-        adder = base_freq * (power_multiplier - 1.0)
+        # Calculate power-to-weight ratio (HP per lb)
+        power_to_weight = hp / weight_lbs
 
-        # High power brackets (YAML lines 104-107)
+        # Reference ratio: 0.154 HP/lb (typical balanced sports car: 400HP / 2600lbs)
+        # This is the baseline where no power adjustment is needed
+        reference_ratio = 0.154
+
+        # Formula: Base × (sqrt(PWR / reference_ratio) - 1.0)
+        # - Cars above reference ratio get positive adjustment (need stiffer springs)
+        # - Cars below reference ratio get negative adjustment (can use softer springs)
+        # - Square root provides diminishing returns at very high PWR
+        pwr_multiplier = math.sqrt(power_to_weight / reference_ratio)
+        adder = base_freq * (pwr_multiplier - 1.0)
+
+        # High absolute power brackets for very powerful cars
+        # (Even heavy cars with 850+ HP need some extra stiffness)
         if hp > 850:
-            adder += 0.3
-        elif hp > 700:
             adder += 0.2
-        elif hp > 600:
+        elif hp > 700:
             adder += 0.1
 
         return max(0, adder)
@@ -1045,6 +1072,29 @@ class ClaudeTunesCLI:
         # Calculate all setup parameters
         setup = self._calculate_complete_setup()
 
+        # Check if vehicle has front differential
+        has_front_diff = 'front' in setup['diff'] and 'rear' in setup['diff']
+
+        # Build differential section based on vehicle type
+        if has_front_diff:
+            diff_section = f"""─────────────────────────── Differential Gear ────────────────
+Differential            Fully Customized
+                                Front         Rear
+Initial Torque             Lv.       {setup['diff']['front']['initial']:2d}           {setup['diff']['rear']['initial']:2d}
+Acceleration Sensitivity   Lv.       {setup['diff']['front']['accel']:2d}           {setup['diff']['rear']['accel']:2d}
+Braking Sensitivity        Lv.       {setup['diff']['front']['brake']:2d}           {setup['diff']['rear']['brake']:2d}
+Torque-Vectoring Center Differential         None
+Front/Rear Torque Distribution              {setup['torque_split']}"""
+        else:
+            diff_section = f"""─────────────────────────── Differential Gear ────────────────
+Differential            Fully Customized
+                                Front         Rear
+Initial Torque             Lv.        -           {setup['diff']['initial']:2d}
+Acceleration Sensitivity   Lv.        -           {setup['diff']['accel']:2d}
+Braking Sensitivity        Lv.        -           {setup['diff']['brake']:2d}
+Torque-Vectoring Center Differential         None
+Front/Rear Torque Distribution              {setup['torque_split']}"""
+
         # Format output
         sheet = f"""═══════════════════════════════════════════════════════
    CLAUDETUNES GT7 SETUP SHEET - {self.car_data['name']}
@@ -1067,14 +1117,7 @@ Natural Frequency          Hz      {setup['frequency']['front']:4.2f}        {se
 Negative Camber Angle       °       {setup['camber']['front']:3.1f}          {setup['camber']['rear']:3.1f}
 Toe Angle                   °     ▼ {abs(setup['toe']['front']):4.2f}      ▲ {setup['toe']['rear']:4.2f}
 
-─────────────────────────── Differential Gear ────────────────
-Differential            Fully Customized
-                                Front         Rear
-Initial Torque             Lv.        -           {setup['diff']['initial']:2d}
-Acceleration Sensitivity   Lv.        -           {setup['diff']['accel']:2d}
-Braking Sensitivity        Lv.        -           {setup['diff']['brake']:2d}
-Torque-Vectoring Center Differential         None
-Front/Rear Torque Distribution              {setup['torque_split']}
+{diff_section}
 
 ─────────────────────────── Aerodynamics ─────────────────────
                                 Front         Rear
@@ -1353,11 +1396,28 @@ PHYSICS: {setup['philosophy']} | Stability: {setup['stability']:.2f} | Gain: {se
         elif self.track_type == 'technical':
             track_diff_adj = {'accel': -7, 'brake': 7}  # -5-10 accel, +5-10 brake
 
-        setup['diff'] = {
-            'initial': min(60, max(5, diff_base['initial'] + diff_comp['initial'])),
-            'accel': min(60, max(5, diff_base['accel'] + diff_comp['accel'] + track_diff_adj['accel'])),
-            'brake': min(60, max(5, diff_base['brake'] + diff_comp['brake'] + track_diff_adj['brake']))
-        }
+        # Check if vehicle has front differential (AWD/4WD)
+        if 'front' in diff_base and 'rear' in diff_base:
+            # AWD/4WD vehicle with front and rear diffs
+            setup['diff'] = {
+                'front': {
+                    'initial': min(60, max(5, diff_base['front']['initial'] + diff_comp['initial'])),
+                    'accel': min(60, max(5, diff_base['front']['accel'] + diff_comp['accel'] + track_diff_adj['accel'])),
+                    'brake': min(60, max(5, diff_base['front']['brake'] + diff_comp['brake'] + track_diff_adj['brake']))
+                },
+                'rear': {
+                    'initial': min(60, max(5, diff_base['rear']['initial'] + diff_comp['initial'])),
+                    'accel': min(60, max(5, diff_base['rear']['accel'] + diff_comp['accel'] + track_diff_adj['accel'])),
+                    'brake': min(60, max(5, diff_base['rear']['brake'] + diff_comp['brake'] + track_diff_adj['brake']))
+                }
+            }
+        else:
+            # RWD/FWD vehicle with rear diff only
+            setup['diff'] = {
+                'initial': min(60, max(5, diff_base['initial'] + diff_comp['initial'])),
+                'accel': min(60, max(5, diff_base['accel'] + diff_comp['accel'] + track_diff_adj['accel'])),
+                'brake': min(60, max(5, diff_base['brake'] + diff_comp['brake'] + track_diff_adj['brake']))
+            }
 
         # Torque split
         split = self.car_data.get('torque_split', '0:100')
@@ -1422,6 +1482,7 @@ PHYSICS: {setup['philosophy']} | Stability: {setup['stability']:.2f} | Gain: {se
         """Calculate LSD settings using YAML Differential Baselines reference table"""
         dt = self.car_data.get('drivetrain', 'FR')
         hp = self.car_data.get('hp', 400)
+        has_front_diff = self.car_data.get('has_front_diff', False)
 
         # Get baseline ranges from reference table (YAML lines 400-419)
         baselines = self.DIFFERENTIAL_BASELINES.get(dt, self.DIFFERENTIAL_BASELINES['FR'])
@@ -1444,11 +1505,38 @@ PHYSICS: {setup['philosophy']} | Stability: {setup['stability']:.2f} | Gain: {se
         # Calculate power-based adjustment using YAML formula (line 232)
         power_add = int((hp - 300) * mult)
 
-        return {
+        # Rear differential (primary)
+        rear_diff = {
             'initial': int(min(60, max(5, base_initial + power_add // 3))),
             'accel': int(min(60, max(5, base_accel + power_add))),
             'brake': int(min(60, max(5, base_brake + power_add // 2)))
         }
+
+        # Front differential (for AWD/4WD vehicles)
+        if has_front_diff:
+            # Front diff is typically more conservative (lower values)
+            # Use AWD baselines for front, scaled by 70-80%
+            front_baselines = self.DIFFERENTIAL_BASELINES['AWD']
+            front_base_initial = sum(front_baselines['initial']) / 2
+            front_base_accel = sum(front_baselines['accel']) / 2
+            front_base_brake = sum(front_baselines['brake']) / 2
+
+            # Front gets less power-based adjustment (60% of rear)
+            front_power_add = int(power_add * 0.6)
+
+            front_diff = {
+                'initial': int(min(60, max(5, front_base_initial + front_power_add // 3))),
+                'accel': int(min(60, max(5, front_base_accel + front_power_add))),
+                'brake': int(min(60, max(5, front_base_brake + front_power_add // 2)))
+            }
+
+            return {
+                'front': front_diff,
+                'rear': rear_diff
+            }
+        else:
+            # Return rear only for RWD/FWD vehicles
+            return rear_diff
 
 
 def main():
