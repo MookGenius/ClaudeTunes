@@ -1166,15 +1166,60 @@ PHYSICS: {setup['philosophy']} | Stability: {setup['stability']:.2f} | Gain: {se
             'rear': min(10, max(1, base_arb_r + (1 if dt == 'RR' else 0) + track_arb_adj + arb_comp['rear']))
         }
 
-        # Damping
-        # Base damping with adjustments
-        comp_base = 25
-        exp_base = 35
+        # Damping - OptimumG Physics-Based Calculation (YAML: tuning_subsystems.damping)
+        # Philosophy: docs/claudetunes_philosophy.md, docs/damper_tuning_guide.md
 
-        # Drivetrain adjustments
+        # Step 1: Calculate sprung mass per corner
+        weight_lbs = self.car_data.get('weight', 2800)
+        weight_kg = weight_lbs * 0.453592
+        sprung_mass_total = weight_kg * 0.80  # 80% is sprung mass
+
+        weight_dist = self.car_data.get('weight_distribution', {'front': 55, 'rear': 45})
+        front_pct = weight_dist.get('front', 55) / 100
+        rear_pct = weight_dist.get('rear', 45) / 100
+
+        sprung_mass_front_corner = (sprung_mass_total * front_pct) / 2  # kg per corner
+        sprung_mass_rear_corner = (sprung_mass_total * rear_pct) / 2
+
+        # Step 2: Get target frequencies from Phase B
+        freq_front = setup['frequency']['front']  # Hz
+        freq_rear = setup['frequency']['rear']
+
+        # Step 3: OptimumG formula - Initial slope = 4π × ζ × ω × m_sm
+        import math
+        zeta = 0.67  # Damping ratio (0.65-0.70 for racing, use mid-range)
+
+        initial_slope_front = 4 * math.pi * zeta * freq_front * sprung_mass_front_corner  # N/(m/s)
+        initial_slope_rear = 4 * math.pi * zeta * freq_rear * sprung_mass_rear_corner
+
+        # Step 4: Energy flow split (compression 2/3, rebound 3/2)
+        comp_force_front = (2/3) * initial_slope_front
+        comp_force_rear = (2/3) * initial_slope_rear
+
+        rebound_force_front = (3/2) * initial_slope_front
+        rebound_force_rear = (3/2) * initial_slope_rear
+
+        # Step 5: Convert physics forces to GT7 percentages
+        # Use OptimumG ratio to differentiate F/R, anchor to YAML baselines (25%/35%)
+
+        # Calculate average force to use as baseline anchor
+        avg_comp_force = (comp_force_front + comp_force_rear) / 2
+        avg_rebound_force = (rebound_force_front + rebound_force_rear) / 2
+
+        # YAML baseline values (from philosophy: 25% comp, 35% rebound)
+        baseline_comp = 25
+        baseline_rebound = 35
+
+        # Calculate F/R percentages maintaining OptimumG ratio
+        comp_pct_front = baseline_comp * (comp_force_front / avg_comp_force)
+        comp_pct_rear = baseline_comp * (comp_force_rear / avg_comp_force)
+
+        rebound_pct_front = baseline_rebound * (rebound_force_front / avg_rebound_force)
+        rebound_pct_rear = baseline_rebound * (rebound_force_rear / avg_rebound_force)
+
+        # Step 6: Apply modifiers (drivetrain, power, CG, track)
         dt_adj = {'FF': 3, 'FR': 1, 'MR': 0, 'RR': -2, 'AWD': 1}.get(dt, 1)
 
-        # Power adjustments
         if hp > 700:
             power_adj = 8
         elif hp > 600:
@@ -1184,28 +1229,57 @@ PHYSICS: {setup['philosophy']} | Stability: {setup['stability']:.2f} | Gain: {se
         else:
             power_adj = 0
 
-        # CG adjustments per YAML
         if cg_height > 500:
-            cg_adj = 2  # High CG: +2%
+            cg_adj = 2
         elif cg_height < 400:
-            cg_adj = -1  # Low CG: -1%
+            cg_adj = -1
         else:
             cg_adj = 0
 
-        # Track type adjustments per YAML
         track_adj = 0
         if self.track_type == 'high_speed':
-            track_adj = 3  # +3% for high-speed tracks
+            track_adj = 3
         elif self.track_type == 'technical':
-            track_adj = -2  # -2% for technical tracks
+            track_adj = -2
+
+        # Step 7: Telemetry reconciliation (if available)
+        telem_adj_comp_f = 0
+        telem_adj_comp_r = 0
+        telem_adj_exp_f = 0
+        telem_adj_exp_r = 0
+
+        susp = self.results.get('suspension_analysis', {})
+        if susp:
+            front_comp = susp.get('front_compression', 0)
+            rear_comp = susp.get('rear_compression', 0)
+
+            # Front softer than rear
+            if front_comp > rear_comp + 0.02:  # >20mm difference
+                telem_adj_comp_f += 5
+                print("  📊 Telemetry: Front compressing more → +5% front compression")
+            # Rear softer than front
+            elif rear_comp > front_comp + 0.02:
+                telem_adj_comp_r += 5
+                print("  📊 Telemetry: Rear compressing more → +5% rear compression")
+
+            # Temperature-based adjustment
+            tire_temps = self.results.get('tire_analysis', {})
+            if tire_temps:
+                front_avg = tire_temps.get('front_avg', 0)
+                rear_avg = tire_temps.get('rear_avg', 0)
+                if front_avg > rear_avg + 5:  # Front >5°C hotter
+                    telem_adj_comp_f -= 2
+                    telem_adj_comp_r += 2
+                    print("  📊 Telemetry: Front tires hot → -2% front, +2% rear compression")
 
         damper_comp = self.results.get('damper_compensation', {'compression_add': 0, 'expansion_add': 0})
 
+        # Final damping values (clamp to GT7 ranges: 20-40% comp, 30-50% rebound)
         setup['damping'] = {
-            'compression_front': min(40, comp_base + dt_adj + power_adj + cg_adj + track_adj + damper_comp['compression_add']),
-            'compression_rear': min(40, comp_base + dt_adj + power_adj + cg_adj + track_adj + damper_comp['compression_add']),
-            'expansion_front': min(50, exp_base + dt_adj + power_adj + cg_adj + track_adj + damper_comp['expansion_add']),
-            'expansion_rear': min(50, exp_base + dt_adj + power_adj + cg_adj + track_adj + damper_comp['expansion_add'])
+            'compression_front': min(40, max(20, int(comp_pct_front + dt_adj + power_adj + cg_adj + track_adj + telem_adj_comp_f + damper_comp['compression_add']))),
+            'compression_rear': min(40, max(20, int(comp_pct_rear + dt_adj + power_adj + cg_adj + track_adj + telem_adj_comp_r + damper_comp['compression_add']))),
+            'expansion_front': min(50, max(30, int(rebound_pct_front + dt_adj + power_adj + cg_adj + track_adj + telem_adj_exp_f + damper_comp['expansion_add']))),
+            'expansion_rear': min(50, max(30, int(rebound_pct_rear + dt_adj + power_adj + cg_adj + track_adj + telem_adj_exp_r + damper_comp['expansion_add'])))
         }
 
         # Camber - based on tire compound, track type, and CG per YAML

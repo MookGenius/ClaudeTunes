@@ -37,16 +37,20 @@ python3 gt7_2r.py /path/to/session/folder
 ### 3. **claudetunes_cli.py** - Physics-Based Setup Generator (v8.5.3b Enhanced)
 Generates optimized GT7 suspension setups from telemetry data and car specifications following the ClaudeTunes protocol.
 
+**Philosophy**: See [ClaudeTunes Philosophy](claudetunes_philosophy.md) and [Damper Tuning Guide](damper_tuning_guide.md) for complete methodology.
+
 **Features:**
 - Physics-based natural frequency approach to suspension tuning
 - Calibrated specifically for GT7's physics engine quirks
 - Drivetrain-specific frequency biases (FF, FR, MR, RR, AWD)
+- **NEW:** OptimumG physics-based damping (front ≠ rear based on frequency + mass)
 - **NEW:** CG height optimization with frequency adjustments
 - **NEW:** Track-type optimization (high-speed/technical/balanced)
 - **NEW:** Roll center compensation calculations
 - **NEW:** Differential compensation for frequency deficits
 - **NEW:** Bottoming detection integration
 - **NEW:** Conservative ride height mode (prevents suspension binding)
+- **NEW:** Telemetry reconciliation (physics baseline + observed behavior)
 - Power platform control and aero adjustment
 - Multi-layer constraint compensation system (ARB, dampers, diff)
 - Generates GT7-formatted setup sheets ready to copy into game
