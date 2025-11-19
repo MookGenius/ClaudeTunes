@@ -246,11 +246,22 @@ class ClaudeTunesCLI:
         return (0, 0)
 
     def _parse_aero_line(self, line):
-        """Parse aero line like 'front) current-xxx (range: min-250 max 350)'"""
+        """Parse aero line like 'front) current-xxx (range: min-250 max 350)' or 'front) current 25 (range: min 0 max 100)'"""
         if 'range:' in line:
             range_part = line.split('range:')[1].strip()
-            min_val = int(range_part.split('min-')[1].split()[0])
-            max_val = int(range_part.split('max')[1].strip().rstrip(')'))
+            # Handle both "min-250" and "min 250" formats
+            if 'min-' in range_part:
+                min_val = int(range_part.split('min-')[1].split()[0])
+            elif 'min ' in range_part:
+                min_val = int(range_part.split('min ')[1].split()[0])
+            else:
+                min_val = 0
+
+            if 'max' in range_part:
+                max_val = int(range_part.split('max')[1].strip().rstrip(')'))
+            else:
+                max_val = 0
+
             return {'min': min_val, 'max': max_val, 'current': (min_val + max_val) / 2}
         return {'min': 0, 'max': 0, 'current': 0}
 
