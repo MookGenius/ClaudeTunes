@@ -46,6 +46,7 @@ Generates optimized GT7 suspension setups from telemetry data and car specificat
 - **NEW:** Roll center compensation calculations
 - **NEW:** Differential compensation for frequency deficits
 - **NEW:** Bottoming detection integration
+- **NEW:** Conservative ride height mode (prevents suspension binding)
 - Power platform control and aero adjustment
 - Multi-layer constraint compensation system (ARB, dampers, diff)
 - Generates GT7-formatted setup sheets ready to copy into game
@@ -65,6 +66,9 @@ python3 claudetunes_cli.py car_data.txt telemetry.json -t high_speed
 
 # Technical track optimization (Monaco, Suzuka)
 python3 claudetunes_cli.py car_data.txt telemetry.json -t technical
+
+# Conservative ride height mode (adds 10mm buffer to prevent suspension binding)
+python3 claudetunes_cli.py car_data.txt telemetry.json --conservative-ride-height
 
 # Save output to file
 python3 claudetunes_cli.py car_data.txt telemetry.json -o setup_sheet.txt

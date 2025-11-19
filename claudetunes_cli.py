@@ -45,13 +45,14 @@ class ClaudeTunesCLI:
         'corner_type_differential': '0.2-0.5s track-specific'
     }
 
-    def __init__(self, protocol_path="ClaudeTunes v8.5.3b.yaml", track_type="balanced"):
+    def __init__(self, protocol_path="ClaudeTunes v8.5.3b.yaml", track_type="balanced", conservative_ride_height=False):
         """Initialize with ClaudeTunes protocol"""
         self.protocol = self._load_protocol(protocol_path)
         self.car_data = {}
         self.telemetry = {}
         self.results = {}
         self.track_type = track_type  # 'high_speed', 'technical', or 'balanced'
+        self.conservative_ride_height = conservative_ride_height  # Add 10mm buffer from minimum
 
     def _load_protocol(self, path):
         """Load ClaudeTunes YAML protocol"""
@@ -1125,16 +1126,24 @@ PHYSICS: {setup['philosophy']} | Stability: {setup['stability']:.2f} | Gain: {se
                     bottoming_detected = True
         ride_ranges = self.car_data.get('ranges', {}).get('ride_height', {})
 
-        # If bottoming detected, increase ride height minimum per YAML
-        ride_height_offset = 10 if bottoming_detected else 0
+        # Calculate ride height offset
+        # Priority: bottoming detection > conservative mode > aggressive (minimum)
+        if bottoming_detected:
+            ride_height_offset = 10
+        elif self.conservative_ride_height:
+            ride_height_offset = 10
+        else:
+            ride_height_offset = 0
 
         setup['ride_height'] = {
-            'front': int(ride_ranges.get('front', (85, 140))[0]) + ride_height_offset,  # Minimum + bottoming offset
-            'rear': int(ride_ranges.get('rear', (110, 165))[0]) + 5 + ride_height_offset  # Minimum + rake + bottoming offset
+            'front': int(ride_ranges.get('front', (85, 140))[0]) + ride_height_offset,  # Minimum + offset
+            'rear': int(ride_ranges.get('rear', (110, 165))[0]) + 5 + ride_height_offset  # Minimum + rake + offset
         }
 
         if bottoming_detected:
             print(f"  ⚠ Bottoming detected in telemetry - ride height raised by {ride_height_offset}mm")
+        elif self.conservative_ride_height:
+            print(f"  ℹ Conservative ride height mode: +{ride_height_offset}mm buffer from minimum")
 
         # ARB - base calculation + compensation + track type per YAML
         base_arb_f = int(setup['frequency']['front'] * 2.5)
@@ -1413,6 +1422,8 @@ For more information, visit: https://github.com/yourrepo/claudetunes
     parser.add_argument('-t', '--track-type', choices=['high_speed', 'technical', 'balanced'],
                         default='balanced',
                         help='Track type for setup optimization (default: balanced)')
+    parser.add_argument('--conservative-ride-height', action='store_true',
+                        help='Add 10mm buffer from minimum ride height to prevent suspension binding')
     parser.add_argument('-v', '--version', action='version', version='ClaudeTunes CLI v8.5.3b')
 
     args = parser.parse_args()
@@ -1432,7 +1443,8 @@ For more information, visit: https://github.com/yourrepo/claudetunes
 
     # Initialize and run
     try:
-        cli = ClaudeTunesCLI(args.protocol, track_type=args.track_type)
+        cli = ClaudeTunesCLI(args.protocol, track_type=args.track_type,
+                            conservative_ride_height=args.conservative_ride_height)
         cli.run(args.car_data, args.telemetry, args.output, session_folder=session_folder)
     except KeyboardInterrupt:
         print("\n\nInterrupted by user")
