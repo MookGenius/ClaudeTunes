@@ -377,14 +377,38 @@ class ClaudeTunesCLI:
         else:
             lr_interp = "L/R balanced"
 
-        # Check for bottoming per corner (>0.28m = moderate, >0.30m = severe)
-        bottoming_corners = []
+        # Check for bottoming vs suspension at travel limits
+        # We distinguish between two scenarios:
+        # 1. Chassis bottoming (body_height very low) = suspension too soft
+        # 2. Suspension maxed (high travel but body_height OK) = suspension too stiff
+
+        chassis_bottoming_corners = []
+        suspension_maxed_corners = []
+        min_body_height = None
+
+        # Get minimum body height from telemetry
+        if 'individual_laps' in self.telemetry and len(self.telemetry['individual_laps']) > 0:
+            min_body_height = self.telemetry['individual_laps'][0].get('suspension_behavior', {}).get('min_body_height', None)
+
+        # Threshold for chassis bottoming (15mm is dangerously low)
+        CHASSIS_BOTTOMING_THRESHOLD = 0.015  # 15mm
+
         if max_travel:
             for corner, max_val in max_travel.items():
-                if max_val > 0.30:
-                    bottoming_corners.append(f"{corner}:{max_val*1000:.0f}mm SEVERE")
-                elif max_val > 0.28:
-                    bottoming_corners.append(f"{corner}:{max_val*1000:.0f}mm")
+                if max_val > 0.28:  # Suspension travel exceeds threshold
+                    severity = "SEVERE" if max_val > 0.30 else ""
+                    corner_str = f"{corner}:{max_val*1000:.0f}mm {severity}".strip()
+
+                    # Check if this is chassis bottoming or suspension maxing out
+                    if min_body_height is not None and min_body_height < CHASSIS_BOTTOMING_THRESHOLD:
+                        # Chassis is hitting the ground - suspension too soft
+                        chassis_bottoming_corners.append(corner_str)
+                    else:
+                        # Suspension hitting travel limits but chassis has clearance - suspension too stiff
+                        suspension_maxed_corners.append(corner_str)
+
+        # Legacy support: combine both for backwards compatibility
+        bottoming_corners = chassis_bottoming_corners + suspension_maxed_corners
 
         self.results['suspension_analysis'] = {
             'front_compression': front_avg,
@@ -393,7 +417,10 @@ class ClaudeTunesCLI:
             'right_compression': right_avg,
             'per_corner': avg_compression,
             'max_travel': max_travel,
-            'bottoming_corners': bottoming_corners,
+            'min_body_height': min_body_height,
+            'chassis_bottoming_corners': chassis_bottoming_corners,
+            'suspension_maxed_corners': suspension_maxed_corners,
+            'bottoming_corners': bottoming_corners,  # Legacy
             'fr_interpretation': fr_interp,
             'lr_interpretation': lr_interp,
             'softest_corner': max_corner[0],
@@ -403,8 +430,18 @@ class ClaudeTunesCLI:
         print(f"  • Suspension travel:")
         print(f"    F/R: {fr_interp}")
         print(f"    L/R: {lr_interp}")
-        if bottoming_corners:
-            print(f"    ⚠ Bottoming: {', '.join(bottoming_corners)}")
+
+        # Improved diagnostics output
+        if chassis_bottoming_corners:
+            print(f"    ⚠ Chassis bottoming: {', '.join(chassis_bottoming_corners)}")
+            if min_body_height is not None:
+                print(f"      Min body height: {min_body_height*1000:.0f}mm (too low!)")
+
+        if suspension_maxed_corners:
+            print(f"    ⚠ Suspension at travel limits: {', '.join(suspension_maxed_corners)}")
+            if min_body_height is not None:
+                print(f"      Min body height: {min_body_height*1000:.0f}mm (chassis clearance OK)")
+
         print(f"    Softest: {max_corner[0]} ({max_corner[1]*1000:.0f}mm avg)")
 
     def _analyze_balance(self):
@@ -593,31 +630,50 @@ class ClaudeTunesCLI:
             insights.append(f"⚠ Lateral imbalance: {side} softer by {diff_mm:.0f}mm")
             recommendations.append(f"Check {side} spring rates or track banking effects")
 
-        # CORRELATION 3: Bottoming + high temps + balance issues
-        bottoming = susp.get('bottoming_corners', [])
-        if bottoming:
-            insights.append(f"⚠ Bottoming detected: {', '.join(bottoming)}")
+        # CORRELATION 3: Chassis bottoming vs suspension maxed out
+        chassis_bottoming = susp.get('chassis_bottoming_corners', [])
+        suspension_maxed = susp.get('suspension_maxed_corners', [])
+        min_body_height = susp.get('min_body_height', None)
 
-            # Check which corners are bottoming
-            rear_bottoming = any('RL' in corner or 'RR' in corner for corner in bottoming)
-            front_bottoming = any('FL' in corner or 'FR' in corner for corner in bottoming)
+        # Handle chassis bottoming (suspension too soft)
+        if chassis_bottoming:
+            insights.append(f"⚠ Chassis bottoming: {', '.join(chassis_bottoming)}")
+            if min_body_height is not None:
+                insights.append(f"  → Min body height: {min_body_height*1000:.0f}mm (chassis hitting ground!)")
+
+            rear_bottoming = any('RL' in corner or 'RR' in corner for corner in chassis_bottoming)
+            front_bottoming = any('FL' in corner or 'FR' in corner for corner in chassis_bottoming)
             all_corners = rear_bottoming and front_bottoming
 
             if all_corners:
                 insights.append("  → All corners bottoming = suspension globally too soft")
                 recommendations.append("Increase frequency by +0.15-0.30 Hz (already applied via telemetry override)")
-            elif rear_hotter and rear_bottoming:
-                insights.append("  → Rear bottoming + higher temps = excessive rear compliance")
-                recommendations.append("Increase rear frequency by +0.15-0.30 Hz (already applied via telemetry override)")
-            elif front_hotter and front_bottoming:
-                insights.append("  → Front bottoming + higher temps = excessive front compliance")
-                recommendations.append("Increase front frequency by +0.15-0.30 Hz (already applied via telemetry override)")
             elif rear_bottoming:
-                insights.append("  → Rear bottoming detected")
-                recommendations.append("Rear frequency increased via telemetry override")
+                insights.append("  → Rear bottoming = excessive rear compliance")
+                recommendations.append("Increase rear frequency by +0.15-0.30 Hz (already applied via telemetry override)")
             elif front_bottoming:
-                insights.append("  → Front bottoming detected")
-                recommendations.append("Front frequency increased via telemetry override")
+                insights.append("  → Front bottoming = excessive front compliance")
+                recommendations.append("Increase front frequency by +0.15-0.30 Hz (already applied via telemetry override)")
+
+        # Handle suspension at travel limits (suspension too stiff)
+        if suspension_maxed:
+            insights.append(f"⚠ Suspension at travel limits: {', '.join(suspension_maxed)}")
+            if min_body_height is not None:
+                insights.append(f"  → Min body height: {min_body_height*1000:.0f}mm (chassis clearance OK)")
+
+            rear_maxed = any('RL' in corner or 'RR' in corner for corner in suspension_maxed)
+            front_maxed = any('FL' in corner or 'FR' in corner for corner in suspension_maxed)
+            all_corners = rear_maxed and front_maxed
+
+            if all_corners:
+                insights.append("  → All corners maxing travel = suspension globally too stiff")
+                recommendations.append("Decrease frequency by -0.15-0.30 Hz (already applied via telemetry override)")
+            elif rear_maxed:
+                insights.append("  → Rear maxing travel = rear too stiff")
+                recommendations.append("Decrease rear frequency by -0.15-0.30 Hz (already applied via telemetry override)")
+            elif front_maxed:
+                insights.append("  → Front maxing travel = front too stiff")
+                recommendations.append("Decrease front frequency by -0.15-0.30 Hz (already applied via telemetry override)")
 
         # Store results
         if insights or recommendations:
@@ -744,11 +800,17 @@ class ClaudeTunesCLI:
         adjustment = 0.0
         reasons = []
 
-        # ANOMALY 1: Excessive bottoming (suspension too soft)
+        # ANOMALY 1: Chassis bottoming vs suspension at travel limits
+        # This is the critical fix: we need to distinguish between:
+        # - Chassis bottoming (body_height very low) = suspension too soft → need stiffer (+Hz)
+        # - Suspension maxed (high travel but body_height OK) = suspension too stiff → need softer (-Hz)
         if 'individual_laps' in self.telemetry:
             laps = self.telemetry['individual_laps']
             if len(laps) > 0 and 'suspension_behavior' in laps[0]:
-                susp_travel = laps[0]['suspension_behavior'].get('suspension_travel', {})
+                susp_behavior = laps[0]['suspension_behavior']
+                susp_travel = susp_behavior.get('suspension_travel', {})
+                min_body_height = susp_behavior.get('min_body_height', None)
+
                 max_values = [
                     susp_travel.get('fl_max', 0),
                     susp_travel.get('fr_max', 0),
@@ -756,14 +818,31 @@ class ClaudeTunesCLI:
                     susp_travel.get('rr_max', 0)
                 ]
 
-                # Severe bottoming (>0.30m)
-                if any(v > 0.30 for v in max_values):
-                    adjustment += 0.30
-                    reasons.append("severe bottoming")
-                # Moderate bottoming (>0.28m)
-                elif any(v > 0.28 for v in max_values):
-                    adjustment += 0.15
-                    reasons.append("moderate bottoming")
+                # Threshold for chassis bottoming (15mm is dangerously low)
+                CHASSIS_BOTTOMING_THRESHOLD = 0.015  # 15mm
+
+                # Check if we have high suspension travel
+                has_severe_travel = any(v > 0.30 for v in max_values)
+                has_moderate_travel = any(v > 0.28 for v in max_values)
+
+                if has_severe_travel or has_moderate_travel:
+                    # Determine if this is chassis bottoming or suspension maxing out
+                    if min_body_height is not None and min_body_height < CHASSIS_BOTTOMING_THRESHOLD:
+                        # CHASSIS BOTTOMING - suspension too soft, need to stiffen
+                        if has_severe_travel:
+                            adjustment += 0.30
+                            reasons.append("severe chassis bottoming")
+                        else:
+                            adjustment += 0.15
+                            reasons.append("moderate chassis bottoming")
+                    else:
+                        # SUSPENSION AT TRAVEL LIMITS - suspension too stiff, need to soften
+                        if has_severe_travel:
+                            adjustment -= 0.30
+                            reasons.append("severe suspension travel limit (too stiff)")
+                        else:
+                            adjustment -= 0.15
+                            reasons.append("moderate suspension travel limit (too stiff)")
 
         # ANOMALY 2: Excessive slip (suspension too stiff or soft)
         if 'tire_slip_analysis' in self.telemetry:
@@ -1146,32 +1225,47 @@ PHYSICS: {setup['philosophy']} | Stability: {setup['stability']:.2f} | Gain: {se
         }
 
         # Ride height - lowest available with positive rake
-        # Check for bottoming detection from telemetry (multiple format support)
-        bottoming_detected = False
+        # Check for CHASSIS bottoming detection from telemetry (multiple format support)
+        # IMPORTANT: Only raise ride height for CHASSIS bottoming, not suspension at travel limits
+        chassis_bottoming_detected = False
 
-        # Format 1: Direct bottoming_detected flag
+        # Format 1: Direct bottoming_detected flag (legacy)
         if 'bottoming_detected' in self.telemetry:
-            bottoming_detected = self.telemetry.get('bottoming_detected', False)
+            chassis_bottoming_detected = self.telemetry.get('bottoming_detected', False)
 
-        # Format 2: gt7_2r.py format - check if max suspension travel > 90%
-        if not bottoming_detected and 'individual_laps' in self.telemetry:
+        # Format 2: gt7_2r.py format - distinguish chassis bottoming from suspension maxed
+        if not chassis_bottoming_detected and 'individual_laps' in self.telemetry:
             laps = self.telemetry['individual_laps']
             if len(laps) > 0 and 'suspension_behavior' in laps[0]:
-                susp_travel = laps[0]['suspension_behavior'].get('suspension_travel', {})
-                # Check max travel values (>0.28m indicates bottoming for most GT7 cars)
+                susp_behavior = laps[0]['suspension_behavior']
+                susp_travel = susp_behavior.get('suspension_travel', {})
+                min_body_height = susp_behavior.get('min_body_height', None)
+
+                # Check max travel values
                 max_values = [
                     susp_travel.get('fl_max', 0),
                     susp_travel.get('fr_max', 0),
                     susp_travel.get('rl_max', 0),
                     susp_travel.get('rr_max', 0)
                 ]
+
+                # Threshold for chassis bottoming (15mm is dangerously low)
+                CHASSIS_BOTTOMING_THRESHOLD = 0.015  # 15mm
+
+                # Only flag as chassis bottoming if BOTH conditions are met:
+                # 1. High suspension travel (>0.28m)
+                # 2. Low body height (<15mm)
                 if any(v > 0.28 for v in max_values):
-                    bottoming_detected = True
+                    if min_body_height is not None and min_body_height < CHASSIS_BOTTOMING_THRESHOLD:
+                        chassis_bottoming_detected = True
+                    # If body_height is OK, this is suspension maxed, NOT chassis bottoming
+                    # DO NOT raise ride height in this case!
+
         ride_ranges = self.car_data.get('ranges', {}).get('ride_height', {})
 
         # Calculate ride height offset
-        # Priority: bottoming detection > conservative mode > aggressive (minimum)
-        if bottoming_detected:
+        # Priority: chassis bottoming detection > conservative mode > aggressive (minimum)
+        if chassis_bottoming_detected:
             ride_height_offset = 10
         elif self.conservative_ride_height:
             ride_height_offset = 10
@@ -1183,8 +1277,8 @@ PHYSICS: {setup['philosophy']} | Stability: {setup['stability']:.2f} | Gain: {se
             'rear': int(ride_ranges.get('rear', (110, 165))[0]) + 5 + ride_height_offset  # Minimum + rake + offset
         }
 
-        if bottoming_detected:
-            print(f"  ⚠ Bottoming detected in telemetry - ride height raised by {ride_height_offset}mm")
+        if chassis_bottoming_detected:
+            print(f"  ⚠ Chassis bottoming detected in telemetry - ride height raised by {ride_height_offset}mm")
         elif self.conservative_ride_height:
             print(f"  ℹ Conservative ride height mode: +{ride_height_offset}mm buffer from minimum")
 
