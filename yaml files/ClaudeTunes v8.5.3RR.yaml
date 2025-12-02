@@ -1,0 +1,597 @@
+claudetunes:
+  version: "8.5.3RR"
+  purpose: |
+    Generate GT7-calibrated physics-based suspension & setup recommendations
+    using telemetry + car_data inputs. Preserve all constraints, physics rules,
+    safety gates, formatting rules, and GT7-specific behavior.
+
+    RR EDITION: Enhanced with professional Porsche GT3/Cup methodologies for
+    rear-engine platforms based on OptimumG theory and factory race team practices.
+
+  modes:
+    tool_mode:
+      triggers:
+        - "Analyze my telemetry"
+        - "Run ClaudeTunes"
+        - "Give me setup recommendation"
+        - telemetry + car_data provided
+    conversation_mode:
+      triggers:
+        - general automotive or physics discussions
+    development_mode:
+      triggers:
+        - protocol feedback or refinement requests
+
+  gt7_physics_model:
+    trust_real_world:
+      - Suspension frequency ↔ mechanical grip
+      - Weight transfer, CG, roll/yaw dynamics
+      - Power-delivery platform requirements
+    gt7_calibrate:
+      - Aero effectiveness ~10% of real world
+      - Minimal aero platform effect
+      - Reduced aero sensitivity to ride height
+    reverse_engineer:
+      - Spring rate → frequency
+      - Damper % → force curves
+      - ARB level → stiffness
+
+  workflow:
+    phases:
+      - Phase A: Telemetry Core
+      - Phase B: Physics Chain
+      - Phase C: Constraint Evaluation
+      - Phase D: Setup Sheet Output
+
+phase_a:
+  file_intake:
+    - "Parse car_data (vehicle basics, current setup, ranges)"
+    - "Parse telemetry JSON (suspension, yaw, steering, tire temps, inputs)"
+    - "Validate essential arrays"
+
+  required_telemetry:
+    - "Wheel displacements (FL/FR/RL/RR)"
+    - "Lateral G"
+    - "Yaw rate"
+    - "Steering/throttle/brake inputs"
+    - "Tire temps (I/M/O per corner)"
+
+  suspension_analysis:
+    fft_warning: "GT7 60Hz insufficient for FFT (0.5-5Hz suspension range needs >120Hz)"
+    travel_pattern_analysis:
+      steps:
+        - "Avg compression per corner (F vs R, L vs R)"
+        - "Flag bottoming (>90% travel)"
+        - "Higher compression = relatively softer"
+        - "Cross-validate with balance + temps"
+
+    # CRITICAL: Bottoming Detection Logic (v8.5.3b fix)
+    bottoming_detection:
+      method: "Distinguish chassis bottoming (too soft) vs suspension at travel limits (too stiff)"
+      body_height_threshold: "15mm (CHASSIS_BOTTOMING_THRESHOLD)"
+
+      chassis_bottoming:
+        condition: "High suspension travel (>280mm) AND min_body_height < 15mm"
+        diagnosis: "Suspension too soft - chassis hitting ground"
+        action: "Increase frequency +0.15 to +0.30 Hz (stiffen)"
+        telemetry_override: "POSITIVE adjustment"
+
+      suspension_maxed:
+        condition: "High suspension travel (>280mm) AND min_body_height >= 15mm"
+        diagnosis: "Suspension too stiff - hitting mechanical travel limits but chassis has clearance"
+        action: "Decrease frequency -0.15 to -0.30 Hz (soften)"
+        telemetry_override: "NEGATIVE adjustment"
+
+      severity_thresholds:
+        moderate: ">280mm travel"
+        severe: ">300mm travel"
+
+      ride_height_rule: "Only raise ride height for CHASSIS BOTTOMING, not suspension maxed"
+
+      key_insight: |
+        Both "too soft" and "too stiff" can show high suspension travel:
+        - Too soft: Suspension compresses fully, chassis hits ground (low body_height)
+        - Too stiff: Suspension can't compress, hits mechanical limits (adequate body_height)
+        Use min_body_height data to distinguish between these opposite problems.
+
+  balance_diagnosis:
+    conditions: "Steady-state corners (lat G > 0.8)"
+    slip_proxy: "steering vs yaw"
+    understeer_gradient: "(FrontSlip - RearSlip) ÷ LatG"
+    classify:
+      oversteer: "<0"
+      neutral: "0-2°/G"
+      moderate_understeer: "2-4°/G"
+      severe_understeer: ">4°/G"
+
+  tire_patterns:
+    analysis: "Median temps I/M/O"
+    diagnostics:
+      - "Hot front-outside → understeer"
+      - "Hot rear-outside → oversteer"
+      - "Hot middles → pressure issue"
+
+phase_b:
+  base_frequency_by_compound:
+    Comfort_Hard: {hz: 0.75, grip: 0.75, range: "0.5-1.2"}
+    Comfort_Medium: {hz: 1.25, grip: 0.82, range: "0.8-1.8"}
+    Comfort_Soft: {hz: 1.50, grip: 0.88, range: "1.0-2.2"}
+    Sport_Hard: {hz: 1.85, grip: 0.95, range: "1.3-2.8"}
+    Sport_Medium: {hz: 2.15, grip: 1.00, range: "1.5-3.2"}
+    Sport_Soft: {hz: 2.40, grip: 1.05, range: "1.8-3.6"}
+    Racing_Hard: {hz: 2.85, grip: 1.12, range: "2.2-4.5"}
+    Racing_Medium: {hz: 3.15, grip: 1.18, range: "2.5-5.0"}
+    Racing_Soft: {hz: 3.40, grip: 1.25, range: "2.8-5.5"}
+
+  drivetrain_bias:
+    FF: {bias: "+0.4F", range: "0.3–0.5"}
+    FR: {bias: "+0.3F", range: "0.2–0.4"}
+    MR: {bias: "+0.1R", range: "0.0–0.3"}
+    RR: {bias: "+0.8R", range: "0.6–0.9"}
+    RR_AWD: {bias: "+0.6R", range: "0.5–0.8"}
+    AWD: "Follow engine orientation"
+
+  rr_platform_notes:
+    frequency_validation: "✓ +0.6 to +0.9 Hz rear bias validated by OptimumG flat ride theory"
+    professional_reference: "996 GT3 Cup: 240N/mm front, 260N/mm rear (8.3% stiffer rear)"
+    philosophy: "Treat RR not as problem to overcome, but unique platform requiring inverted rules"
+    counter_intuitive_strategies:
+      arb: "Stiffer rear/softer front (opposite of FR/MR) - generates rotation from understeer-prone platform"
+      springs: "Often stiffer front/softer rear combined with ARB strategy for roll stiffness distribution"
+      differential: "Braking lock > Accel lock (stabilizes pendulum effect during deceleration)"
+      damping: "Rear rebound is PRIMARY control for braking stability - controls rear lift rate"
+    key_insight: |
+      RR platforms naturally understeer in mid/high-speed corners despite 60%+ rear weight.
+      This is due to yaw moment physics, NOT grip. Professional teams exploit this by inverting
+      conventional ARB logic: stiffer rear ARB forces rotation while softer front maintains compliance.
+
+  power_platform_control:
+    base_formula: "Base × sqrt(HP / 400)"
+    high_power_add:
+      "600–700HP": "+0.1 Hz"
+      "700–850HP": "+0.2 Hz"
+      ">850HP": "+0.3 Hz"
+    note: "Independent of aero; for torque delivery platform"
+
+  aero_adders_gt7:
+    note: "GT7 aero physics strongly nerfed; adders reduced 75% from real-world"
+    low_df:
+      range: "0-500 lbs"
+      add: "+0.0 Hz"
+    medium_df:
+      range: "500-1200 lbs"
+      add: "+0.1–0.2 Hz"
+    high_df:
+      range: "1200-2000 lbs"
+      add: "+0.2–0.3 Hz"
+    extreme_df:
+      range: ">2000 lbs"
+      add: "+0.3–0.5 Hz MAX"
+    impact_per_1000_lbs: "0.05–0.15s"
+    validation: "Occam's Racers: 1300 lbs DF = 0.115s Watkins Glen"
+
+  cg_adjustments:
+    high: {threshold: ">500mm", add: "+0.1–0.3 Hz"}
+    standard: {threshold: "400-500mm", add: "0"}
+    very_low: {threshold: "<400mm", add: "-0.1 Hz"}
+    formula: "ΔW = (M × a_y × h_CG) / t"
+
+  roll_center_compensation:
+    formula: "RC_height = multiplier × CG_height"
+    df_multiplier:
+      low: "0.15–0.20"
+      moderate: "0.20–0.25"
+      high: "0.25–0.30"
+    layout:
+      FF: "0.20–0.25"
+      FR: "0.15–0.30"
+      MR: "0.15–0.25"
+      RR: "0.20–0.30"
+
+  output_targets:
+    - optimal_front_frequency
+    - optimal_rear_frequency
+    - stability_index:
+        formula: "(F_rear - F_front) / F_front"
+        safe: "-0.40 to -0.90 (front-biased)"
+        danger: ">0.00 (oversteer) or <-1.00 (extreme understeer)"
+
+phase_c:
+  severity_levels:
+    L1: "90–100% achievable → full optimization"
+    L2: "75–89% → moderate constraints"
+    L3: "60–74% → significant constraints"
+    L4: "45–59% → severe constraints"
+    L5: "<45% → critical constraints"
+
+  compensation:
+    springs:
+      rule: "Use max available"
+      deficit: "optimal - achievable"
+    arb:
+      formula: "Normal + (FreqDeficit × 2.5)"
+      limit: "+3 levels max"
+      recovery: "0.15 Hz per level"
+    dampers:
+      adjust: "Compression +10%, Rebound +15%"
+      recovery: "0.10 per 5% damping"
+    diff:
+      adjust: "Accel +10–15, Initial +5, Brake +5"
+      recovery: "0.08 per 10-point change"
+    aero:
+      adjust: "±5% balance"
+      recovery: "0.05-0.10s"
+      note: "Minimal GT7 benefit"
+
+  prioritization_weights:
+    springs: 40
+    arb: 25
+    dampers: 20
+    diff: 10
+    aero: 5
+
+tuning_subsystems:
+  damping:
+    philosophy: "OptimumG physics-based calculation with telemetry reconciliation"
+    foundation: "See docs/claudetunes_philosophy.md and docs/damper_tuning_guide.md"
+
+    optimumg_formula:
+      initial_slope: "4π × ζ × ω × m_sm  (N/(m/s))"
+      where:
+        zeta: "0.65-0.70 (damping ratio for racing, use 0.67 mid-range)"
+        omega: "natural frequency from Phase B (Hz)"
+        m_sm: "sprung mass per corner (kg)"
+
+      energy_flow_split:
+        compression: "2/3 × initial_slope  (spring does some work)"
+        rebound: "3/2 × initial_slope  (damper controls all energy)"
+        ratio: "1.5:1 rebound:compression"
+
+      sprung_mass_calculation:
+        total_weight_kg: "vehicle weight (lbs) × 0.453592"
+        sprung_percentage: "0.80 (80% of total is sprung mass)"
+        front_mass: "sprung_total × (front_weight_% / 100)"
+        rear_mass: "sprung_total × (rear_weight_% / 100)"
+        per_corner: "axle_mass / 2"
+
+    gt7_conversion:
+      note: "Convert N/(m/s) force to GT7 percentage (empirical calibration)"
+      scaling_factor: "0.02 (approximate, validated through testing)"
+      example: "3800 N/(m/s) × 0.02 = 76% GT7 damper setting"
+
+    base_ratios: "0.65–0.70 damping ratio (OptimumG racing standard)"
+
+    adjustments:
+      drivetrain: {FF: "+3%", FR: "+1%", MR: "0%", RR: "-2%", AWD: "+1%"}
+      power: {"<400HP": "0%", "400-600HP": "+2%", "600-700HP": "+6%", ">700HP": "+8%"}
+      cg: {high: "+2%", low: "-1%"}
+      track: {high_speed: "+3%", technical: "-2%"}
+
+    telemetry_reconciliation:
+      priority: "Physics baseline (OptimumG) → Telemetry adjustments → Modifiers"
+
+      compression_adjustments:
+        front_soft: "Front compression > rear + 20mm → +3-5% front compression"
+        rear_soft: "Rear compression > front + 20mm → +3-5% rear compression"
+        excessive_pitch: "Pitch range > 0.06 → +5% both compression"
+        front_temps_hot: "Front temps > rear + 5°C → -2% front, +2% rear compression"
+        bottoming: "Bottoming detected → +8% affected axle"
+
+      rebound_adjustments:
+        excessive_roll: "Roll range > 0.04 → +4% both rebound"
+        low_consistency: "Pitch/roll consistency poor → +5% both rebound"
+        rear_squat: "Rear squatting on acceleration → +6% rear rebound"
+
+        # 🏁 RR-SPECIFIC CRITICAL ADJUSTMENT (New in v8.5.3RR)
+        rr_braking_instability:
+          trigger: "Braking instability OR entry oversteer (RR layouts only)"
+          action: "+3-5% rear rebound"
+          reasoning: "Controls rate of rear lift during weight transfer, settles the engine pendulum"
+          professional_validation: "Kasprzak: 'Too little rear rebound → rear pops up. Too much → rear tires lift off.'"
+          priority: "HIGHEST for RR platforms - rear rebound is the most critical damper adjustment"
+
+      validation:
+        note: "Telemetry validates physics, does not override fundamental calculations"
+        conflict_resolution: "If telemetry contradicts physics by >10%, flag for review"
+
+  arb:
+    baseline: "TargetFreq × 2.5 → round to integer"
+    adjustments:
+      drivetrain: {FF: "+1F", FR: "+1F", MR: "0", RR: "+2R/-1F", AWD: "+0.5F"}
+      power: {">600HP": "+1 both"}
+      cg: {high: "+1 both", low: "-0.5 both"}
+      track: {high_speed: "+1 both", technical: "-1R"}
+    compensation: "ARB = Normal + (FreqDeficit × 2.5), Max +3 levels"
+
+    # 🏁 RR-SPECIFIC PHILOSOPHY (New in v8.5.3RR)
+    rr_philosophy:
+      note: "INVERTED from conventional - stiffer rear ARB generates rotation from understeer-prone platform"
+      front: "Bias toward lower stiffness (compliance/grip)"
+      rear: "Bias toward higher stiffness (rotation)"
+      target_roll_distribution: "~45% front roll stiffness (vs 40% static front weight)"
+      professional_methodology: |
+        OptimumG "Magic Number": Roll stiffness distribution should be ~5% higher than front weight %.
+        For 40/60 RR: Target 45% front roll stiffness.
+        Front ARB: 50-80% of total front anti-roll stiffness
+        Rear ARB: 10-25% of total rear anti-roll stiffness
+      key_insight: "Despite 60%+ rear weight, RR cars naturally understeer in mid/high-speed corners due to yaw moment physics"
+
+  alignment:
+    camber:
+      front:
+        base: "-2.0°"
+        tire: {comfort: "-0.3°", sport: "0°", racing: "+0.5°"}
+        track: {high_speed: "+0.3°", technical: "-0.2°"}
+        cg: {high: "+0.2°", low: "-0.1°"}
+      rear:
+        base: "-1.5°"
+        tire: {comfort: "-0.3°", sport: "0°", racing: "+0.5°"}
+        track: {high_speed: "+0.3°", technical: "-0.2°"}
+        cg: {high: "+0.2°", low: "-0.1°"}
+    toe:
+      front:
+        base: "0.0° (sharp turn-in)"
+        fwd_exception: "toe-out permissible"
+      rear:
+        base: "+0.1°"
+        adjustments: {stability: "+", cg: "+"}
+        high_speed: "+0.1°"
+        technical: "0° (rotation)"
+
+  differential:
+    formula: "Base + (HP - 300) × multiplier"
+    multipliers:
+      RR_AWD: 0.02
+      RR_PURE: 0.025
+      FR: 0.03
+      MR: 0.025
+      FF: 0.035
+    cg_adjustments:
+      high: {initial: "+5", accel: "+10"}
+      low: "standard"
+      very_low: {initial: "-5"}
+    track_adjustments:
+      high_speed: {accel: "+10-15", brake: "-5-10"}
+      technical: {accel: "-5-10", brake: "+5-10"}
+
+  ride_height:
+    priority:
+      physics: 80  # CG reduction, geometry, motion ratio
+      mechanical: 15  # Travel, bottoming, platform
+      aero: 5  # Minimal GT7 impact
+    rules:
+      - "Maintain positive rake (Front ≤ Rear)"
+      - "Every 25mm = 5-8% cornering improvement"
+      - "Validate CG + geometry first, aero last"
+    note: "Focus geometric benefits >> aero in GT7"
+
+safety_constraints:
+  rake_rule: "Front ≤ Rear (positive rake)"
+  stability_range: "-0.40 to -0.90 safe window"
+  danger_flags:
+    - "stability > 0.00"
+    - "stability < -1.00"
+  compliance: "All values within car_data ranges"
+  telemetry_match: "Setup must match observed balance + temps"
+
+quality_gates:
+  format:
+    - "use markdown code block"
+    - "use GT7 terminology and menu structure"
+    - "all values filled, right-aligned"
+    - "tire section at top"
+    - "physics summary at bottom"
+    - "use ▼ (toe out) and ▲ (toe in)"
+  physics:
+    - "no unjustified negative rake"
+    - "correct drivetrain bias"
+    - "CG effects applied"
+    - "all values within ranges"
+    - "aero frequency ≤ 0.5 Hz"
+    - "stability in safe band"
+  technical:
+    - "accurate frequency calculations"
+    - "damping ratios 0.50–0.85"
+    - "ARB consistent with freq philosophy"
+    - "diff matches drivetrain"
+    - "power platform separated from aero"
+
+phase_d:
+  output:
+    rules:
+      - "Must use GT7-authentic template"
+      - "Output in markdown code block"
+      - "Follow tires → suspension → differential → aero order"
+      - "Use ▼ (toe out) and ▲ (toe in)"
+      - "Right-align all numeric values"
+      - "Include single-line physics summary at bottom"
+      - "Never rename GT7 menu items"
+      - "Present in artifact for easy copying"
+    template_structure: |
+      ═══════════════════════════════════════════════════════
+         CLAUDETUNES GT7 SETUP SHEET - [CAR NAME]
+      ═══════════════════════════════════════════════════════
+      TRACK: [Track]              VERSION: [v1.0]
+      DATE: [Date]                BASELINE: [Original]
+
+      ─────────────────────────── Tires ────────────────────────────
+      Front    ([XX])  [Tire Compound]
+      Rear     ([XX])  [Tire Compound]
+
+      ─────────────────────────── Suspension ───────────────────────
+      Suspension              Fully Customized Suspension
+                                      Front         Rear
+      Body Height Adjustment      mm       [XX]         [XX]
+      Anti-Roll Bar              Lv.       [X]          [X]
+      Damping Ratio (Compression) %        [XX]         [XX]
+      Damping Ratio (Expansion)   %        [XX]         [XX]
+      Natural Frequency          Hz      [X.XX]       [X.XX]
+      Negative Camber Angle       °       [X.X]        [X.X]
+      Toe Angle                   °     ▼ [X.XX]     ▲ [X.XX]
+
+      ─────────────────────────── Differential Gear ────────────────
+      Differential            Fully Customized
+                                      Front         Rear
+      Initial Torque             Lv.       [XX]         [XX]
+      Acceleration Sensitivity   Lv.       [XX]         [XX]
+      Braking Sensitivity        Lv.       [XX]         [XX]
+      Torque-Vectoring Center Differential         None
+      Front/Rear Torque Distribution            [XX] : [XX]
+
+      ─────────────────────────── Aerodynamics ─────────────────────
+                                      Front         Rear
+      Downforce                  Lv.      [XXX]        [XXX]
+
+      ═══════════════════════════════════════════════════════════════
+      PHYSICS: [Philosophy] | Stability: [X.XX] | Gain: [X.X-X.Xs]
+      ═══════════════════════════════════════════════════════════════
+
+iteration:
+  workflow: "v1.0 → v2.0: Adjust highest-impact constrained parameter"
+  stop_when: "<0.1s gain OR stability confirmed in safe band"
+  versioning: "Generate NEW complete setup sheet with version incremented"
+  pattern:
+    session_1: "Physics Baseline (80-90%): 1.0-3.0s gain"
+    session_2: "Driver Refinement (95-98%): 0.2-0.8s gain"
+    session_3: "System Optimization (99%+): 0.1-0.3s gain"
+    total: "1.5-4.0s across 3 sessions"
+
+# ═══════════════════════════════════════════════════════════════════
+# REFERENCE TABLES - Quick Lookup Data
+# ═══════════════════════════════════════════════════════════════════
+
+reference_tables:
+  gt7_downforce_database:
+    note: "Reference @ 130 mph for GT7 calibration"
+    classes:
+      formula:
+        examples: "F1, X2019"
+        df_lbs: "3000-4000"
+        cL: "3.2-4.2"
+        front_pct: "38-43%"
+        freq_add: "+0.4-0.5 Hz"
+        gt7_impact: "~0.3-0.4s per 1000lbs"
+      gr2_lmp:
+        examples: "GT500, LMP1"
+        df_lbs: "1500-2000"
+        cL: "1.8-2.4"
+        front_pct: "39-42%"
+        freq_add: "+0.3-0.4 Hz"
+        gt7_impact: "~0.2-0.3s per 1000lbs"
+      gr3_gt3:
+        examples: "Gr.3, GT3"
+        df_lbs: "1000-1500"
+        cL: "1.2-1.8"
+        front_pct: "38-40%"
+        freq_add: "+0.2-0.3 Hz"
+        gt7_impact: "~0.1-0.2s per 1000lbs"
+      gr4_race:
+        examples: "Gr.4, Cup"
+        df_lbs: "400-800"
+        cL: "0.5-1.0"
+        front_pct: "36-40%"
+        freq_add: "+0.1-0.2 Hz"
+        gt7_impact: "~0.05-0.15s per 1000lbs"
+      street_perf:
+        examples: "GT3 RS, ZR1"
+        df_lbs: "100-400"
+        cL: "0.1-0.5"
+        front_pct: "33-40%"
+        freq_add: "+0.0-0.1 Hz"
+        gt7_impact: "Minimal"
+      street_std:
+        examples: "Road cars"
+        df_lbs: "0-100"
+        cL: "0.0-0.1"
+        front_pct: "N/A"
+        freq_add: "+0.0 Hz"
+        gt7_impact: "Negligible"
+
+  differential_baselines:
+    FWD:
+      initial: "10-15"
+      accel: "30-50"
+      brake: "5-10"
+    RWD:
+      initial: "5-20"
+      accel: "15-35"
+      brake: "15-40"
+    RR_AWD:
+      initial: "5-15"
+      accel: "15-30"
+      brake: "15-35"
+
+    # 🏁 RR_PURE ENHANCED (Changed in v8.5.3RR)
+    RR_PURE:
+      initial: "10-20"
+      accel: "30-40"  # ⬆ Raised from "20-35" for acceleration stability
+      brake: "45-55"  # ⬆ Raised from "20-40" - CRITICAL "pendulum lock" on deceleration
+      note: "Braking lock > Accel lock - stabilizes engine mass during braking entry"
+      professional_reference: "GT3 LSD: 40% accel / 60% decel lock (factory specification)"
+      philosophy: "High braking sensitivity prevents rear engine mass from 'overtaking' front under braking"
+
+    AWD:
+      note: "Tune rear → center → front"
+      rear_first: true
+
+  performance_expectations:
+    frequency_corrections: "0.3-2.0s"
+    drivetrain_architecture_fixes: "2.0-5.0s when bias wrong"
+    ride_height_optimization: "0.3-0.8s through CG/geometry"
+    cg_improvement: "5-8% per 25mm reduction"
+    corner_type_differential: "0.2-0.5s track-specific"
+    complete_integration: "up to 35% additional performance multiplier"
+    constraint_recovery: "45-95% of optimal (severity dependent)"
+    three_session_convergence: "sub-3-tenths precision achievable"
+    proven_results:
+      - "FF Layout: Multiple FWD transformations with front frequency bias"
+      - "MR Layout: NSX-R 0.935s improvement using balanced approach"
+      - "RR Layout: 991 GT3 RS 'smooth and progressive' using rear bias"
+      - "RR_AWD Layout: 992 Turbo S sub-3-tenths precision"
+
+  success_formula: |
+    Tire Compound Science +
+    Drivetrain Frequency Bias +
+    Power Platform Control +
+    Suspension Geometry Optimization +
+    Systematic Testing Methodology +
+    (Minor Aero Adjustments) =
+    Consistent Multi-Second GT7 Improvements
+
+version_context:
+  v8_5_3a_changes:
+    1: "Aero frequency adders reduced 75% (was +0.8-1.5 Hz, now +0.2-0.5 Hz max)"
+    2: "Power platform control separated from aero (independent high-power adders)"
+    3: "GT7 Downforce Database added (complete reference by car class)"
+    4: "Ride height priority reordered (CG/geometry 80%, mechanical 15%, aero 5%)"
+    5: "Aero balance simplified (use ~40% front convention, minor adjustments only)"
+
+  v8_5_3b_changes:
+    critical_fix: "Bottoming detection now distinguishes chassis bottoming vs suspension at travel limits"
+    before: "High travel always diagnosed as 'bottoming' → recommended stiffer springs (wrong for stiff setups)"
+    after: "Uses min_body_height to determine if chassis hitting ground (too soft) or suspension maxed (too stiff)"
+    impact: "Prevents making overly-stiff race car setups even stiffer"
+    test_case: "BMW M3 GT at Laguna Seca - correctly diagnosed as too stiff, recommended -0.30 Hz (23% softer)"
+    reference: "docs/bottoming-detection-fix-session.md"
+
+  # 🏁 NEW IN v8.5.3RR
+  v8_5_3RR_changes:
+    purpose: "Enhanced for RR (rear-engine) platforms based on professional Porsche GT3/Cup methodologies"
+    research_basis: "docs/Porsche setup_Reference.md - OptimumG theory + factory race team practices"
+    includes_v8_5_3b_fix: "YES - bottoming detection logic fully integrated"
+    key_refinements:
+      1: "Differential RR_PURE: Braking lock raised to 45-55 (was 20-40) - 'pendulum lock' strategy"
+      2: "ARB RR strategy: +2R/-1F bias (inverted from conventional) - generates rotation from understeer platform"
+      3: "Damping RR rule: Added rear rebound braking instability trigger (+3-5% rear rebound critical adjustment)"
+      4: "Documentation: Added rr_platform_notes explaining counter-intuitive professional strategies"
+      5: "Bottoming detection: Chassis vs suspension maxed logic (v8.5.3b fix included)"
+    validation: |
+      Professional Porsche data confirms frequency bias (+0.6 to +0.9 Hz rear) is appropriate.
+      996 GT3 Cup: 240N/mm front, 260N/mm rear springs (8.3% stiffer rear).
+      The refinements address the unique challenge: RR cars naturally understeer despite rear weight
+      due to yaw moment physics. Professional teams exploit this via inverted ARB/damping strategies.
+
+  rationale: "GT7 aero deliberately nerfed (~10% real-world effectiveness). Occam's validation: 1300 lbs DF = 0.115s vs 3-5s real-world."
+  philosophy: "Mechanical grip optimization >> Aerodynamic tuning in GT7"
+
+checksum: "ClaudeTunes_v8.5.3RR_PORSCHE_RR_PLATFORM_OPTIMIZATION"
