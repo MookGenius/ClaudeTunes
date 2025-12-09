@@ -197,7 +197,7 @@ class ClaudeTunesCLI:
                 if "range:" in range_line:
                     data['ranges']['ride_height'] = self._parse_range(range_line)
                 i += 3
-            elif line == "NATURAL FREQUENCY x.xx hz/x.xx hz":
+            elif line.startswith("NATURAL FREQUENCY"):
                 range_line = lines[i + 1] if i + 1 < len(lines) else ""
                 if "range:" in range_line:
                     data['ranges']['frequency'] = self._parse_range(range_line)
@@ -1053,9 +1053,41 @@ class ClaudeTunesCLI:
         front_range = ranges.get('front', (0, 10))
         rear_range = ranges.get('rear', (0, 10))
 
-        # Check if targets are achievable
-        achievable_front = min(max(target_front, front_range[0]), front_range[1])
-        achievable_rear = min(max(target_rear, rear_range[0]), rear_range[1])
+        # Preserve drivetrain frequency bias when constraining (CRITICAL for MR/FR/RR/etc)
+        # Option 3: Shift both equally to reach minimum, maintaining absolute differential
+        original_differential = target_rear - target_front  # e.g., 3.32 - 3.22 = +0.10 Hz
+
+        # Check if either target violates constraints
+        front_needs_shift = max(0, front_range[0] - target_front)  # How much to shift up if below min
+        rear_needs_shift = max(0, rear_range[0] - target_rear)
+        front_over_max = max(0, target_front - front_range[1])    # How much to shift down if above max
+        rear_over_max = max(0, target_rear - rear_range[1])
+
+        # Determine the shift needed (use the largest constraint violation)
+        shift_up = max(front_needs_shift, rear_needs_shift)
+        shift_down = max(front_over_max, rear_over_max)
+
+        if shift_up > 0:
+            # Both frequencies need to shift up to meet minimum
+            achievable_front = target_front + shift_up
+            achievable_rear = target_rear + shift_up
+        elif shift_down > 0:
+            # Both frequencies need to shift down to meet maximum
+            achievable_front = target_front - shift_down
+            achievable_rear = target_rear - shift_down
+        else:
+            # No shift needed, targets are within range
+            achievable_front = target_front
+            achievable_rear = target_rear
+
+        # Final safety clamp (in case one shifted value still exceeds the other limit)
+        achievable_front = min(max(achievable_front, front_range[0]), front_range[1])
+        achievable_rear = min(max(achievable_rear, rear_range[0]), rear_range[1])
+
+        # Verify we preserved the differential (within rounding tolerance)
+        final_differential = achievable_rear - achievable_front
+        if abs(final_differential - original_differential) > 0.01:
+            print(f"  ⚠ Warning: Frequency differential changed from {original_differential:.2f} to {final_differential:.2f} Hz")
 
         # Calculate deficits
         front_deficit = target_front - achievable_front
@@ -1286,21 +1318,33 @@ PHYSICS: {setup['philosophy']} | Stability: {setup['stability']:.2f} | Gain: {se
         base_arb_f = int(setup['frequency']['front'] * 2.5)
         base_arb_r = int(setup['frequency']['rear'] * 2.5)
 
-        # Drivetrain adjustments
-        dt_arb_adj = {'FF': 1, 'FR': 1, 'MR': 0, 'RR': 1, 'AWD': 0}.get(dt, 0)
+        # Drivetrain adjustments per YAML (line 246)
+        # FF/FR: +1F, MR: -1R, RR: +1R, AWD: +0.5F
+        dt_arb_adj_f = 0
+        dt_arb_adj_r = 0
+        if dt == 'FF' or dt == 'FR':
+            dt_arb_adj_f = 1  # Front-biased drivetrains get stiffer front ARB
+        elif dt == 'MR':
+            dt_arb_adj_r = -1  # MR gets softer rear ARB for traction
+        elif dt == 'RR':
+            dt_arb_adj_r = 1  # RR gets stiffer rear ARB for stability
+        elif dt == 'AWD':
+            dt_arb_adj_f = 1  # AWD gets slight front bias (0.5 rounded to 1)
 
         # Track type adjustments
-        track_arb_adj = 0
+        track_arb_adj_f = 0
+        track_arb_adj_r = 0
         if self.track_type == 'high_speed':
-            track_arb_adj = 1  # +1 both for high-speed
+            track_arb_adj_f = 1  # +1 both for high-speed
+            track_arb_adj_r = 1
         elif self.track_type == 'technical':
-            track_arb_adj = -1  # -1 rear for technical rotation
+            track_arb_adj_r = -1  # -1 rear for technical rotation
 
         arb_comp = self.results.get('arb_compensation', {'front': 0, 'rear': 0})
 
         setup['arb'] = {
-            'front': min(10, max(1, base_arb_f + dt_arb_adj + (track_arb_adj if self.track_type == 'high_speed' else 0) + arb_comp['front'])),
-            'rear': min(10, max(1, base_arb_r + (1 if dt == 'RR' else 0) + track_arb_adj + arb_comp['rear']))
+            'front': min(10, max(1, base_arb_f + dt_arb_adj_f + track_arb_adj_f + arb_comp['front'])),
+            'rear': min(10, max(1, base_arb_r + dt_arb_adj_r + track_arb_adj_r + arb_comp['rear']))
         }
 
         # Damping - OptimumG Physics-Based Calculation (YAML: tuning_subsystems.damping)
@@ -1386,7 +1430,8 @@ PHYSICS: {setup['philosophy']} | Stability: {setup['stability']:.2f} | Gain: {se
         telem_adj_exp_r = 0
 
         susp = self.results.get('suspension_analysis', {})
-        if susp:
+        # Only process telemetry if we have valid dict data (not the "No telemetry data" string)
+        if susp and isinstance(susp, dict):
             front_comp = susp.get('front_compression', 0)
             rear_comp = susp.get('rear_compression', 0)
 
@@ -1424,15 +1469,15 @@ PHYSICS: {setup['philosophy']} | Stability: {setup['stability']:.2f} | Gain: {se
         if 'Racing' in tire:
             camber_base_f = -2.0
             camber_base_r = -1.5
-            tire_adj = 0.5  # Racing: +0.5°
+            tire_adj = -0.5  # Racing: more negative camber for stiff sidewalls
         elif 'Sport' in tire:
             camber_base_f = -2.0
             camber_base_r = -1.5
-            tire_adj = 0.0  # Sport: 0
+            tire_adj = 0.0  # Sport: baseline
         else:
             camber_base_f = -2.0
             camber_base_r = -1.5
-            tire_adj = -0.3  # Comfort: -0.3°
+            tire_adj = +0.3  # Comfort: less negative camber for soft sidewalls
 
         # Track type adjustments
         track_camber_adj = 0
