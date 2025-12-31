@@ -209,14 +209,24 @@ class ClaudeTunesCLI:
 
     def phase_a_intake(self, car_data_path, telemetry_path):
         """Phase A: Parse car data and telemetry, analyze suspension/balance"""
+        from pathlib import Path
 
         # Load car data
         self.car_data = self._parse_car_data(car_data_path)
         print(f"  ✓ Loaded: {self.car_data['name']}")
         print(f"    Drivetrain: {self.car_data['drivetrain']} | {self.car_data['hp']} HP | {self.car_data['weight']} lbs")
 
-        # Load telemetry JSON
-        self.telemetry = self._parse_telemetry(telemetry_path)
+        # Phase 1: Auto-detect domain JSONs vs monolithic JSON
+        telemetry_path_obj = Path(telemetry_path)
+
+        if telemetry_path_obj.is_dir():
+            # Phase 1: Load domain JSONs from session folder
+            print(f"  • Phase 1 Mode: Loading domain JSONs from {telemetry_path}")
+            self.telemetry = self._load_domain_jsons(telemetry_path)
+        else:
+            # Legacy: Load monolithic telemetry JSON file
+            print(f"  • Legacy Mode: Loading monolithic JSON from {telemetry_path}")
+            self.telemetry = self._parse_telemetry(telemetry_path)
 
         # Count data points from either format
         data_point_count = 0
@@ -374,7 +384,7 @@ class ClaudeTunesCLI:
         return {'min': 0, 'max': 0, 'current': 0}
 
     def _parse_telemetry(self, path):
-        """Load telemetry JSON file"""
+        """Load telemetry JSON file (legacy method for monolithic JSON)"""
         try:
             with open(path, 'r') as f:
                 return json.load(f)
@@ -384,6 +394,74 @@ class ClaudeTunesCLI:
         except json.JSONDecodeError as e:
             print(f"Warning: Error parsing telemetry JSON: {e}")
             return {}
+
+    def _load_domain_jsons(self, session_folder):
+        """Phase 1: Load domain JSONs from session folder and create compatible telemetry structure"""
+        from pathlib import Path
+
+        session_path = Path(session_folder)
+        if not session_path.exists():
+            print(f"Warning: Session folder '{session_folder}' not found")
+            return {}
+
+        # Load all 6 domain JSONs
+        domains = {}
+        domain_files = ['metadata.json', 'suspension.json', 'tires.json',
+                       'aero.json', 'drivetrain.json', 'balance.json']
+
+        for domain_file in domain_files:
+            domain_path = session_path / domain_file
+            domain_name = domain_file.replace('.json', '')
+            try:
+                with open(domain_path, 'r') as f:
+                    domains[domain_name] = json.load(f)
+            except FileNotFoundError:
+                print(f"  ! Warning: {domain_file} not found")
+                domains[domain_name] = {}
+            except json.JSONDecodeError as e:
+                print(f"  ! Warning: Error parsing {domain_file}: {e}")
+                domains[domain_name] = {}
+
+        # Transform domain JSONs into telemetry structure compatible with analyze methods
+        # This creates the same structure that the old gt7_2r.py analyzer would create
+        telemetry = {}
+
+        # Suspension data (from suspension.json)
+        if 'suspension' in domains and 'travel_mm' in domains['suspension']:
+            travel_data = domains['suspension']['travel_mm']
+            telemetry['suspension_travel'] = {
+                'FL': travel_data.get('FL', {}).get('samples', []),
+                'FR': travel_data.get('FR', {}).get('samples', []),
+                'RL': travel_data.get('RL', {}).get('samples', []),
+                'RR': travel_data.get('RR', {}).get('samples', [])
+            }
+
+        # Balance data (from balance.json)
+        if 'balance' in domains and 'weight_transfer' in domains['balance']:
+            # Extract lateral_g average for understeer/oversteer detection
+            lateral_g = domains['balance']['weight_transfer'].get('lateral_g', {})
+            # Simple approximation: convert lateral G to understeer gradient
+            # This is a placeholder - real balance analysis would be more sophisticated
+            avg_lateral = lateral_g.get('avg', 0)
+            telemetry['balance'] = {
+                'understeer_gradient': avg_lateral * 2  # Simple conversion
+            }
+
+        # Tire temperature data (from tires.json)
+        if 'tires' in domains and 'temps_celsius' in domains['tires']:
+            temps_data = domains['tires']['temps_celsius']
+            telemetry['tire_summary'] = {
+                'temperature_averages': {
+                    'fl': temps_data.get('FL', {}).get('avg', 0),
+                    'fr': temps_data.get('FR', {}).get('avg', 0),
+                    'rl': temps_data.get('RL', {}).get('avg', 0),
+                    'rr': temps_data.get('RR', {}).get('avg', 0)
+                }
+            }
+
+        print(f"  ✓ Loaded {len([d for d in domains.values() if d])} domain JSONs from {session_folder}")
+
+        return telemetry
 
     def _analyze_suspension(self):
         """Analyze suspension travel patterns from telemetry"""

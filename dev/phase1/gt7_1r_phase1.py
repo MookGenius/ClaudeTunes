@@ -3,11 +3,21 @@ from datetime import timedelta as td
 import socket
 import sys
 import struct
-import csv
 import os
 import signal
 # pip3 install pycryptodome
 from Crypto.Cipher import Salsa20
+
+# Phase 1: Domain extractors and JSON writers
+from utils import (
+    MetadataExtractor,
+    SuspensionExtractor,
+    TireExtractor,
+    AeroExtractor,
+    DrivetrainExtractor,
+    BalanceExtractor,
+    BufferedDomainWriter
+)
 
 # ansi prefix
 pref = "\033["
@@ -16,14 +26,15 @@ pref = "\033["
 SendPort = 33739
 ReceivePort = 33740
 
-# Data logging setup
+# Phase 1: Session setup with timestamp-based folder
 session_start_time = dt.now()
-session_folder = f"gt7_session_{session_start_time.strftime('%Y%m%d_%H%M%S')}"
-current_lap_data = []
+session_folder = f"sessions/{session_start_time.strftime('%Y%m%d_%H%M%S')}"
 current_lap_number = 0
+packet_count = 0
 
 # Create session folder
 os.makedirs(session_folder, exist_ok=True)
+print(f"Session folder: {session_folder}")
 
 # GT7 CAR DATABASE - All car codes mapped to car names
 CAR_DATABASE = {
@@ -226,117 +237,132 @@ def get_car_name(car_code):
     """Lookup car name from car code"""
     return CAR_DATABASE.get(car_code, f"Unknown Car ({car_code})")
 
-# CORRECTED CSV headers matching Packet A structure
-csv_headers = [
-    # Basic tracking
-    'timestamp', 'lap_number', 'packet_id', 'car_code', 'car_name',
-    
-    # Position & motion
-    'position_x', 'position_y', 'position_z',
-    'velocity_x', 'velocity_y', 'velocity_z',
-    'rotation_pitch', 'rotation_yaw', 'rotation_roll',
-    'north_orientation',
-    'angular_velocity_x', 'angular_velocity_y', 'angular_velocity_z',
-    
-    # Suspension & body
-    'body_height',
-    
-    # Engine
-    'rpm',
-    
-    # Fuel
-    'fuel_level', 'fuel_capacity', 'is_electric',
-    
-    # Speed
-    'speed_mps', 'speed_kph',
-    
-    # Boost
-    'boost_pressure', 'has_turbo',
-    
-    # Temperatures and pressure
-    'oil_pressure', 'water_temp', 'oil_temp',
-    
-    # TIRE TEMPERATURES
-    'tire_temp_fl', 'tire_temp_fr', 'tire_temp_rl', 'tire_temp_rr',
-    
-    # Lap data
-    'total_laps', 'best_lap_time_ms', 'last_lap_time_ms', 'time_on_track_ms',
-    
-    # Race position
-    'current_position', 'total_positions',
-    
-    # Pre-race data
-    'pre_race_start_position', 'pre_race_num_cars',
-    
-    # Rev limiter
-    'rev_warning', 'rev_limiter',
-    
-    # Calculated max speed
-    'estimated_top_speed',
-    
-    # SIMULATOR FLAGS (decoded)
-    'flag_car_on_track', 'flag_paused', 'flag_loading', 'flag_in_gear',
-    'flag_has_turbo', 'flag_rev_limiter_alert', 'flag_handbrake',
-    'flag_lights_on', 'flag_high_beam', 'flag_low_beam', 'flag_asm_active', 'flag_tcs_active',
-    
-    # Gear data
-    'current_gear', 'suggested_gear',
-    
-    # Throttle and brake
-    'throttle_percent', 'brake_percent',
-    
-    # ROAD PLANE DATA (banking)
-    'road_plane_x', 'road_plane_y', 'road_plane_z', 'road_plane_distance',
-    
-    # TIRE RPS (revolutions per second in radians)
-    'tire_rps_fl', 'tire_rps_fr', 'tire_rps_rl', 'tire_rps_rr',
-    
-    # TIRE RADIUS
-    'tire_radius_fl', 'tire_radius_fr', 'tire_radius_rl', 'tire_radius_rr',
-    
-    # Calculated tire speeds
-    'tire_speed_fl', 'tire_speed_fr', 'tire_speed_rl', 'tire_speed_rr',
-    
-    # Calculated tire slip ratios
-    'tire_slip_ratio_fl', 'tire_slip_ratio_fr', 'tire_slip_ratio_rl', 'tire_slip_ratio_rr',
-    
-    # SUSPENSION HEIGHT
-    'suspension_fl', 'suspension_fr', 'suspension_rl', 'suspension_rr',
-    
-    # UNKNOWN FLOATS (8 mystery fields at 0xD4-0xF0)
-    'unknown_float_1', 'unknown_float_2', 'unknown_float_3', 'unknown_float_4',
-    'unknown_float_5', 'unknown_float_6', 'unknown_float_7', 'unknown_float_8',
-    
-    # CLUTCH DATA
-    'clutch_pedal', 'clutch_engagement', 'rpm_clutch_gearbox',
-    
-    # TRANSMISSION DATA
-    'transmission_top_speed',
-    
-    # GEAR RATIOS (correct location at 0x104)
-    'gear_ratio_1', 'gear_ratio_2', 'gear_ratio_3', 'gear_ratio_4',
-    'gear_ratio_5', 'gear_ratio_6', 'gear_ratio_7', 'gear_ratio_8',
-    
-    # Current lap time
-    'current_lap_time'
-]
+# Simple downforce database for Phase 1 (estimated values in lbs)
+# TODO: Complete this with actual GT7 downforce values
+DOWNFORCE_DATABASE = {
+    # Formula cars
+    2109: 1800, 2110: 1750, 2111: 1700,  # Red Bull X cars
+    # GR2/LMP cars
+    116: 1500, 998: 1400, 1067: 1350,  # GT-One, Sauber C9, XJR-9
+    # GR3 cars (general estimate)
+    1797: 950, 1902: 900, 1905: 950,  # SLS AMG GT3, Z4 GT3, GT-R NISMO GT3
+    # Hypercars
+    3462: 825,  # LaFerrari
+    # Default: 0 for street cars
+}
 
-def save_lap_data():
-    """Save current lap data to CSV file"""
-    global current_lap_data, current_lap_number
-    
-    if current_lap_data and current_lap_number > 0:
-        filename = f"{session_folder}/lap_{current_lap_number:03d}.csv"
-        
-        with open(filename, 'w', newline='') as csvfile:
-            writer = csv.writer(csvfile)
-            if len(csv_headers) != len(current_lap_data[0]):
-                printAt(f'WARNING: header/data mismatch! {len(csv_headers)} vs {len(current_lap_data[0])}', 20, 1, reverse=1)
-            writer.writerow(csv_headers)
-            writer.writerows(current_lap_data)
-        
-        printAt(f"Saved lap {current_lap_number} data: {len(current_lap_data)} data points   ", 19, 1)
-        current_lap_data = []
+# Phase 1: Initialize domain extractors and JSON writer
+metadata_extractor = MetadataExtractor(CAR_DATABASE)
+suspension_extractor = SuspensionExtractor()
+tire_extractor = TireExtractor()
+aero_extractor = AeroExtractor(DOWNFORCE_DATABASE)
+drivetrain_extractor = DrivetrainExtractor()
+balance_extractor = BalanceExtractor()
+
+# Buffered JSON writer (writes every 10 packets)
+domain_writer = BufferedDomainWriter(session_folder, buffer_size=10)
+
+print("Domain extractors initialized")
+print("JSON writer ready (buffer=10 packets)")
+
+# OLD CSV CODE - No longer used in Phase 1
+# csv_headers = [
+#     # Basic tracking
+#     'timestamp', 'lap_number', 'packet_id', 'car_code', 'car_name',
+#     
+#     # Position & motion
+#     'position_x', 'position_y', 'position_z',
+#     'velocity_x', 'velocity_y', 'velocity_z',
+#     'rotation_pitch', 'rotation_yaw', 'rotation_roll',
+#     'north_orientation',
+#     'angular_velocity_x', 'angular_velocity_y', 'angular_velocity_z',
+#     
+#     # Suspension & body
+#     'body_height',
+#     
+#     # Engine
+#     'rpm',
+#     
+#     # Fuel
+#     'fuel_level', 'fuel_capacity', 'is_electric',
+#     
+#     # Speed
+#     'speed_mps', 'speed_kph',
+#     
+#     # Boost
+#     'boost_pressure', 'has_turbo',
+#     
+#     # Temperatures and pressure
+#     'oil_pressure', 'water_temp', 'oil_temp',
+#     
+#     # TIRE TEMPERATURES
+#     'tire_temp_fl', 'tire_temp_fr', 'tire_temp_rl', 'tire_temp_rr',
+#     
+#     # Lap data
+#     'total_laps', 'best_lap_time_ms', 'last_lap_time_ms', 'time_on_track_ms',
+#     
+#     # Race position
+#     'current_position', 'total_positions',
+#     
+#     # Pre-race data
+#     'pre_race_start_position', 'pre_race_num_cars',
+#     
+#     # Rev limiter
+#     'rev_warning', 'rev_limiter',
+#     
+#     # Calculated max speed
+#     'estimated_top_speed',
+#     
+#     # SIMULATOR FLAGS (decoded)
+#     'flag_car_on_track', 'flag_paused', 'flag_loading', 'flag_in_gear',
+#     'flag_has_turbo', 'flag_rev_limiter_alert', 'flag_handbrake',
+#     'flag_lights_on', 'flag_high_beam', 'flag_low_beam', 'flag_asm_active', 'flag_tcs_active',
+#     
+#     # Gear data
+#     'current_gear', 'suggested_gear',
+#     
+#     # Throttle and brake
+#     'throttle_percent', 'brake_percent',
+#     
+#     # ROAD PLANE DATA (banking)
+#     'road_plane_x', 'road_plane_y', 'road_plane_z', 'road_plane_distance',
+#     
+#     # TIRE RPS (revolutions per second in radians)
+#     'tire_rps_fl', 'tire_rps_fr', 'tire_rps_rl', 'tire_rps_rr',
+#     
+#     # TIRE RADIUS
+#     'tire_radius_fl', 'tire_radius_fr', 'tire_radius_rl', 'tire_radius_rr',
+#     
+#     # Calculated tire speeds
+#     'tire_speed_fl', 'tire_speed_fr', 'tire_speed_rl', 'tire_speed_rr',
+#     
+#     # Calculated tire slip ratios
+#     'tire_slip_ratio_fl', 'tire_slip_ratio_fr', 'tire_slip_ratio_rl', 'tire_slip_ratio_rr',
+#     
+#     # SUSPENSION HEIGHT
+#     'suspension_fl', 'suspension_fr', 'suspension_rl', 'suspension_rr',
+#     
+#     # UNKNOWN FLOATS (8 mystery fields at 0xD4-0xF0)
+#     'unknown_float_1', 'unknown_float_2', 'unknown_float_3', 'unknown_float_4',
+#     'unknown_float_5', 'unknown_float_6', 'unknown_float_7', 'unknown_float_8',
+#     
+#     # CLUTCH DATA
+#     'clutch_pedal', 'clutch_engagement', 'rpm_clutch_gearbox',
+#     
+#     # TRANSMISSION DATA
+#     'transmission_top_speed',
+#     
+#     # GEAR RATIOS (correct location at 0x104)
+#     'gear_ratio_1', 'gear_ratio_2', 'gear_ratio_3', 'gear_ratio_4',
+#     'gear_ratio_5', 'gear_ratio_6', 'gear_ratio_7', 'gear_ratio_8',
+#     
+#     # Current lap time
+#     'current_lap_time'
+# ]
+
+# Phase 1: No more save_lap_data function!
+# Domain JSONs are continuously updated every 10 packets
+# Extractors maintain rolling statistics across all laps
 
 def decode_flags(flags_raw):
     """Decode the 16-bit simulator flags"""
@@ -640,29 +666,27 @@ def extract_telemetry_data(ddata, lap_time_seconds):
 # ctrl-c handler
 def handler(signum, frame):
     print("\nShutting down...")
-    save_lap_data()
-    
+
+    # Phase 1: Force write final domain JSONs
+    domain_writer.force_write()
+    print("Final domain JSONs written")
+
     summary_file = f"{session_folder}/session_summary.txt"
     with open(summary_file, 'w') as f:
-        f.write(f"GT7 Complete Telemetry Session - Packet A (CORRECTED)\n")
+        f.write(f"GT7 Telemetry Session - Phase 1 Domain JSON Architecture\n")
         f.write(f"Started: {session_start_time}\n")
         f.write(f"Ended: {dt.now()}\n")
-        try:
-            total_saved = sum(name.startswith('lap_') and name.endswith('.csv') for name in os.listdir(session_folder))
-        except Exception:
-            total_saved = 0
-        f.write(f"Total laps recorded: {total_saved}\n")
+        f.write(f"Total packets processed: {packet_count}\n")
+        f.write(f"Laps completed: {current_lap_number}\n")
         f.write(f"Data saved to: {session_folder}/\n")
-        f.write(f"\nComplete Packet A data includes:\n")
-        f.write(f"  - Position, velocity, rotation\n")
-        f.write(f"  - Tire data (temps, slip, speeds)\n")
-        f.write(f"  - Engine & drivetrain data\n")
-        f.write(f"  - Simulator flags (TCS, ASM, etc.)\n")
-        f.write(f"  - Road plane banking data\n")
-        f.write(f"  - Gear ratios (all 8 gears) - CORRECTED OFFSETS\n")
-        f.write(f"  - Car code identification\n")
-        f.write(f"  - 8 unknown floats for research\n")
-    
+        f.write(f"\nDomain JSON files:\n")
+        f.write(f"  - metadata.json (session info, car, lap times)\n")
+        f.write(f"  - suspension.json (travel, bottoming, ride height)\n")
+        f.write(f"  - tires.json (temps, slip, wear)\n")
+        f.write(f"  - aero.json (ride height, downforce, rake)\n")
+        f.write(f"  - drivetrain.json (power, gearing, wheel spin)\n")
+        f.write(f"  - balance.json (g-forces, stability)\n")
+
     print(f"Session data saved to: {session_folder}/")
     sys.stdout.write(f'{pref}?1049l')
     sys.stdout.write(f'{pref}?25h')
@@ -794,76 +818,100 @@ while True:
                     dt_start = dt_now
                 
                 if curlap != prevlap and prevlap != -1:
-                    save_lap_data()
+                    # Phase 1: No save_lap_data() - JSONs are continuously updated
+                    printAt(f'Lap {prevlap} complete  ', 19, 1)
                     dt_start = dt_now
-                    
+
                 prevlap = curlap
                 current_lap_number = curlap
                 curLapTime = dt_now - dt_start
-                
-                telemetry_data = extract_telemetry_data(ddata, curLapTime.total_seconds())
-                current_lap_data.append(telemetry_data)
-                
+
+                # Phase 1: Extract all 6 domains from packet
+                metadata = metadata_extractor.extract(ddata, dt_now)
+                suspension = suspension_extractor.extract(ddata)
+                tires = tire_extractor.extract(ddata)
+                car_code = struct.unpack('i', ddata[0x124:0x128])[0]
+                aero = aero_extractor.extract(ddata, car_code)
+                drivetrain = drivetrain_extractor.extract(ddata)
+                balance = balance_extractor.extract(ddata)
+
+                # Update buffered writer
+                domain_writer.update_domain('metadata', metadata)
+                domain_writer.update_domain('suspension', suspension)
+                domain_writer.update_domain('tires', tires)
+                domain_writer.update_domain('aero', aero)
+                domain_writer.update_domain('drivetrain', drivetrain)
+                should_flush = domain_writer.update_domain('balance', balance)
+
+                # Increment packet counter
+                packet_count += 1
+
+                # Flush to disk every 10 packets
+                if should_flush:
+                    domain_writer.flush()
+                    printAt(f'Domain JSONs updated ({packet_count} packets)', 19, 1)
+
                 # Update display
                 printAt(f'{current_lap_number:3d}', 5, 15)
-                printAt(f'{len(current_lap_data):5d}', 6, 15)
+                printAt(f'{packet_count:5d}', 6, 15)
                 if current_lap_number > 1:
                     printAt(f'{current_lap_number-1:3d}', 7, 15)
                 printAt(f'{secondsToLaptime(curLapTime.total_seconds()):>9}', 5, 30)
                 
-                if len(current_lap_data) > 0:
-                    latest = current_lap_data[-1]
-                    
-                    # Vehicle data - using correct indices
-                    speed_kph = latest[20]  # speed_kph index
-                    printAt(f'{speed_kph:6.1f} kph', 10, 7)
-                    
-                    rpm = latest[16]  # rpm index
-                    printAt(f'{rpm:7.0f}', 11, 6)
-                    
-                    gear = int(latest[54])  # current_gear index
-                    if gear == 0:
-                        printAt(' R', 12, 7)
-                    elif gear == 15:
-                        printAt(' N', 12, 7)
-                    else:
-                        printAt(f'{gear:2d}', 12, 7)
-                    
-                    car_code = int(latest[3])  # car_code
-                    car_name = str(latest[4])  # car_name
-                    # Display shortened car name (first 25 chars to fit screen)
-                    car_display = car_name[:25] if len(car_name) > 25 else car_name
-                    printAt(f'{car_display:<25}', 13, 6)
-                    printAt(f'{car_code:5d}', 14, 7)
-                    
-                    # Gear ratios - using correct indices (at end of array before lap time)
-                    gear_ratio_1 = latest[-9]  # gear_ratio_1
-                    gear_ratio_2 = latest[-8]  # gear_ratio_2
-                    gear_ratio_3 = latest[-7]  # gear_ratio_3
-                    gear_ratio_4 = latest[-6]  # gear_ratio_4
-                    gear_ratio_5 = latest[-5]  # gear_ratio_5
-                    gear_ratio_6 = latest[-4]  # gear_ratio_6
-                    
-                    printAt(f'{gear_ratio_1:5.3f}' if gear_ratio_1 > 0 else '  -  ', 10, 45)
-                    printAt(f'{gear_ratio_2:5.3f}' if gear_ratio_2 > 0 else '  -  ', 11, 45)
-                    printAt(f'{gear_ratio_3:5.3f}' if gear_ratio_3 > 0 else '  -  ', 12, 45)
-                    printAt(f'{gear_ratio_4:5.3f}' if gear_ratio_4 > 0 else '  -  ', 13, 45)
-                    printAt(f'{gear_ratio_5:5.3f}' if gear_ratio_5 > 0 else '  -  ', 14, 45)
-                    printAt(f'{gear_ratio_6:5.3f}' if gear_ratio_6 > 0 else '  -  ', 15, 45)
-                    
-                    # Road banking (road_plane data)
-                    road_plane_y = latest[57]  # road_plane_y index
-                    banking_angle = road_plane_y * 57.2958  # Convert to degrees
-                    printAt(f'{banking_angle:+6.2f}°', 17, 10)
-                    
-                    # Flags - using correct indices
-                    tcs_active = int(latest[53])  # flag_tcs_active
-                    asm_active = int(latest[52])  # flag_asm_active
-                    on_track = int(latest[42])    # flag_car_on_track
-                    
-                    printAt('ON ' if tcs_active else 'OFF', 17, 35)
-                    printAt('ON ' if asm_active else 'OFF', 17, 47)
-                    printAt('YES' if on_track else 'NO ', 18, 37)
+                # Phase 1: Display data from extracted domains
+                # Speed (from metadata)
+                speed_kph = metadata['session_summary']['speed_kph']
+                printAt(f'{speed_kph:6.1f} kph', 10, 7)
+
+                # RPM (from drivetrain)
+                rpm = drivetrain['power_delivery']['rpm']
+                printAt(f'{rpm:7.0f}', 11, 6)
+
+                # Current gear (from drivetrain)
+                gear = drivetrain['gearing']['current_gear']
+                if gear == 0:
+                    printAt(' R', 12, 7)
+                elif gear == 15:
+                    printAt(' N', 12, 7)
+                else:
+                    printAt(f'{gear:2d}', 12, 7)
+
+                # Car name and code (from metadata)
+                car_name = metadata['car']['name']
+                car_display = car_name[:25] if len(car_name) > 25 else car_name
+                printAt(f'{car_display:<25}', 13, 6)
+                printAt(f'{car_code:5d}', 14, 7)
+
+                # Gear ratios (from drivetrain)
+                gear_ratios = drivetrain['gearing']['ratios']
+                gear_ratio_1 = gear_ratios[0] if len(gear_ratios) > 0 else 0
+                gear_ratio_2 = gear_ratios[1] if len(gear_ratios) > 1 else 0
+                gear_ratio_3 = gear_ratios[2] if len(gear_ratios) > 2 else 0
+                gear_ratio_4 = gear_ratios[3] if len(gear_ratios) > 3 else 0
+                gear_ratio_5 = gear_ratios[4] if len(gear_ratios) > 4 else 0
+                gear_ratio_6 = gear_ratios[5] if len(gear_ratios) > 5 else 0
+
+                printAt(f'{gear_ratio_1:5.3f}' if gear_ratio_1 > 0 else '  -  ', 10, 45)
+                printAt(f'{gear_ratio_2:5.3f}' if gear_ratio_2 > 0 else '  -  ', 11, 45)
+                printAt(f'{gear_ratio_3:5.3f}' if gear_ratio_3 > 0 else '  -  ', 12, 45)
+                printAt(f'{gear_ratio_4:5.3f}' if gear_ratio_4 > 0 else '  -  ', 13, 45)
+                printAt(f'{gear_ratio_5:5.3f}' if gear_ratio_5 > 0 else '  -  ', 14, 45)
+                printAt(f'{gear_ratio_6:5.3f}' if gear_ratio_6 > 0 else '  -  ', 15, 45)
+
+                # Road banking (from suspension domain)
+                road_plane_y = suspension['road_surface']['plane_y']
+                banking_angle = road_plane_y * 57.2958  # Convert to degrees
+                printAt(f'{banking_angle:+6.2f}°', 17, 10)
+
+                # Flags - read directly from packet
+                flags_raw = struct.unpack('H', ddata[0x8E:0x90])[0]
+                tcs_active = (flags_raw >> 6) & 1
+                asm_active = (flags_raw >> 7) & 1
+                on_track = 1  # Assume on track if receiving packets
+
+                printAt('ON ' if tcs_active else 'OFF', 17, 35)
+                printAt('ON ' if asm_active else 'OFF', 17, 47)
+                printAt('YES' if on_track else 'NO ', 18, 37)
             else:
                 curLapTime = 0
 
