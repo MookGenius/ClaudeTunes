@@ -51,3 +51,6 @@ sessions/*/
 # Testing outputs
 test_*.txt
 corvette_*.txt
+
+# Backup files
+*.bak
